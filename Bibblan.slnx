@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Bibblan.Core/Bibblan.Core.csproj" />
+  <Project Path="Bibblan.Tests/Bibblan.Tests.csproj" />
 </Solution>
