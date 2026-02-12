@@ -32,4 +32,12 @@ public class Loan
     {
         return ReturnDate != null;
     }
+
+    public void MarkAsReturned()
+    {
+        if (ReturnDate != null)
+            throw new InvalidOperationException("Lånet är redan återlämnat.");
+
+        ReturnDate = DateTime.Now;
+    }
 }

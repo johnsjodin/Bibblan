@@ -30,9 +30,17 @@ public class Member : ISearchable
     public string GetInfo()
     {
         StringBuilder loansInfo = new StringBuilder();
-        foreach (Loan loan in Loans)
+
+        if (Loans.Count == 0)
         {
-            loansInfo.AppendLine($"  - \"{loan.Book.Title}\" av {loan.Book.Author} (Återlämnas: {loan.DueDate.ToShortDateString()})");
+            loansInfo.Append("Inga lånade böcker.");
+        }
+        else
+        {
+            foreach (Loan loan in Loans)
+            {
+                loansInfo.AppendLine($"  - \"{loan.Book.Title}\" av {loan.Book.Author} (Återlämnas: {loan.DueDate.ToShortDateString()})");
+            }
         }
 
         return $"Medlem: {Name} (ID: {MemberId}, Email: {Email}, Medlem sedan: {MemberSince.ToShortDateString()}" +
