@@ -1,6 +1,4 @@
 ﻿using Bibblan.Core;
-using Xunit;
-
 namespace Bibblan.Tests;
 
 public class BookTests
