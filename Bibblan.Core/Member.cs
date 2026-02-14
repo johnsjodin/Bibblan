@@ -15,11 +15,11 @@ public class Member : ISearchable
     public Member(string memberId, string name, string email)
     {
         if (string.IsNullOrWhiteSpace(memberId))
-            throw new ArgumentException("MemberId får inte vara tomt.", nameof(memberId));
+            throw new ArgumentException("Medlems-ID får inte vara tomt.", nameof(memberId));
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name får inte vara tomt.", nameof(name));
+            throw new ArgumentException("Namn får inte vara tomt.", nameof(name));
         if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException("Email får inte vara tomt.", nameof(email));
+            throw new ArgumentException("E-post får inte vara tomt.", nameof(email));
         MemberId = memberId;
         Name = name;
         Email = email;
@@ -43,7 +43,7 @@ public class Member : ISearchable
             }
         }
 
-        return $"Medlem: {Name} (ID: {MemberId}, Email: {Email}, Medlem sedan: {MemberSince.ToShortDateString()}" +
+        return $"Medlem: {Name} (ID: {MemberId}, E-post: {Email}, Medlem sedan: {MemberSince.ToShortDateString()}" +
             $"\nLånade böcker:\n{loansInfo}";
     }
 
