@@ -2,18 +2,14 @@
 
 public class MemberRegistry
 {
-    public List<Member> Members { get; }
-
-    public MemberRegistry()
-    {
-        Members = new List<Member>();
-    }
+    private readonly List<Member> _members = new List<Member>();
+    public IReadOnlyList<Member> Members => _members;
 
     public bool AddMember(Member member)
     {
         if (member == null)
             throw new ArgumentNullException(nameof(member));
-        Members.Add(member);
+        _members.Add(member);
         return true;
     }
 
@@ -21,13 +17,13 @@ public class MemberRegistry
     {
         if (string.IsNullOrWhiteSpace(memberId))
             throw new ArgumentException("Medlems-ID får inte vara tomt.", nameof(memberId));
-        return Members.FirstOrDefault(m => m.MemberId == memberId);
+        return _members.FirstOrDefault(m => m.MemberId == memberId);
     }
 
     public bool RemoveMember(string memberId)
     {
         var member = GetMemberById(memberId);
         if (member == null) return false;
-        return Members.Remove(member);
+        return _members.Remove(member);
     }
 }

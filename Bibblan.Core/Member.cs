@@ -10,7 +10,9 @@ public class Member : ISearchable
     public string Name { get; private set; }
     public string Email { get; private set; }
     public DateTime MemberSince { get; private set; }
-    public List<Loan> Loans { get; private set; }
+
+    private readonly List<Loan> _loans = new List<Loan>();
+    public IReadOnlyList<Loan> Loans => _loans;
 
     public Member(string memberId, string name, string email)
     {
@@ -24,20 +26,27 @@ public class Member : ISearchable
         Name = name;
         Email = email;
         MemberSince = DateTime.Now;
-        Loans = new List<Loan>();
+    }
+
+    internal void AddLoan(Loan loan)
+    {
+        if (loan == null)
+            throw new ArgumentNullException(nameof(loan));
+        _loans.Add(loan);
     }
 
     public string GetInfo()
     {
         StringBuilder loansInfo = new StringBuilder();
+        var activeLoans = Loans.Where(l => !l.IsReturned()).ToList();
 
-        if (Loans.Count == 0)
+        if (activeLoans.Count == 0)
         {
             loansInfo.Append("Inga lånade böcker.");
         }
         else
         {
-            foreach (Loan loan in Loans)
+            foreach (Loan loan in activeLoans)
             {
                 loansInfo.AppendLine($"  - \"{loan.Book.Title}\" av {loan.Book.Author} (Återlämnas: {loan.DueDate.ToShortDateString()})");
             }

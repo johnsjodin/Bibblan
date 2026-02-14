@@ -90,8 +90,8 @@ public class MemberTests
         var loan1 = new Loan(book1, member, loanDate, dueDate);
         var loan2 = new Loan(book2, member, loanDate, dueDate.AddDays(7));
 
-        member.Loans.Add(loan1);
-        member.Loans.Add(loan2);
+        member.AddLoan(loan1);
+        member.AddLoan(loan2);
 
         // Act
         var info = member.GetInfo();
@@ -103,6 +103,34 @@ public class MemberTests
         Assert.Contains("J.R.R. Tolkien", info);
         Assert.Contains("Återlämnas:", info);
         Assert.DoesNotContain("Inga lånade böcker.", info);
+    }
+
+    [Fact]
+    public void GetInfo_ShouldNotShowReturnedBooks()
+    {
+        // Arrange
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var loanDate = DateTime.Now.AddDays(-10);
+        var dueDate = loanDate.AddDays(14);
+
+        var loan1 = new Loan(book1, member, loanDate, dueDate);
+        var loan2 = new Loan(book2, member, loanDate, dueDate.AddDays(7));
+
+        member.AddLoan(loan1);
+        member.AddLoan(loan2);
+
+        // Return the first book
+        loan1.MarkAsReturned(DateTime.Now);
+
+        // Act
+        var info = member.GetInfo();
+
+        // Assert
+        Assert.DoesNotContain("Harry Potter", info); // Returned book should not appear
+        Assert.Contains("Sagan om ringen", info); // Active loan should appear
+        Assert.Contains("J.R.R. Tolkien", info);
     }
 
     [Theory]
