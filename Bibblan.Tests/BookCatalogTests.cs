@@ -78,6 +78,36 @@ public class BookCatalogTests
     }
 
     [Fact]
+    public void RemoveBook_ShouldThrowException_WhenIsbnIsNull()
+    {
+        // Arrange
+        var catalog = new BookCatalog();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => catalog.RemoveBook(null));
+    }
+
+    [Fact]
+    public void RemoveBook_ShouldThrowException_WhenIsbnIsEmpty()
+    {
+        // Arrange
+        var catalog = new BookCatalog();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => catalog.RemoveBook(""));
+    }
+
+    [Fact]
+    public void RemoveBook_ShouldThrowException_WhenIsbnIsWhitespace()
+    {
+        // Arrange
+        var catalog = new BookCatalog();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => catalog.RemoveBook("   "));
+    }
+
+    [Fact]
     public void RemoveBook_ShouldRemoveCorrectBook_WhenMultipleBooksExist()
     {
         // Arrange

@@ -40,7 +40,8 @@ Bibblan/
 │   ├── MemberRegistry.cs      # Medlemsregister
 │   ├── LoanManager.cs         # Lånehantering
 │   ├── Library.cs             # Huvudfacade för systemet
-│   └── ISearchable.cs         # Sökinterface
+│   ├── ISearchable.cs         # Sökinterface
+│   └── Program.cs             # Konsolgränssnitt
 │
 └── Bibblan.Tests/             # Enhetstester
     ├── BookTests.cs           # Tester för Book
@@ -78,7 +79,12 @@ cd Bibblan
 dotnet build
 ```
 
-3. Kör testerna:
+3. Kör konsolappen:
+```bash
+dotnet run --project Bibblan.Core
+```
+
+4. Kör testerna:
 ```bash
 dotnet test
 ```
@@ -123,7 +129,7 @@ if (mostActive != null)
 
 ## 🧪 Testning
 
-Projektet har omfattande enhetstester med 100+ testfall som täcker:
+Projektet har enhetstester som täcker:
 
 - ✅ Konstruktorvalidering
 - ✅ Affärslogik

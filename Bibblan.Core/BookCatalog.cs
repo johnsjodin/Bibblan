@@ -14,6 +14,9 @@ public class BookCatalog
 
     public bool RemoveBook(string isbn)
     {
+        if (string.IsNullOrWhiteSpace(isbn))
+            throw new ArgumentException("ISBN får inte vara tomt.", nameof(isbn));
+
         var book = _books.FirstOrDefault(b => b.ISBN == isbn);
         if (book == null) return false;
 
