@@ -73,7 +73,7 @@ public class MemberTests
         // Assert
         Assert.Contains("Medlem: Johan Johansson", info);
         Assert.Contains("ID: 12345", info);
-        Assert.Contains("Email: johan@testemail.se", info);
+        Assert.Contains("E-post: johan@testemail.se", info);
         Assert.Contains("Inga lånade böcker.", info);
     }
 
