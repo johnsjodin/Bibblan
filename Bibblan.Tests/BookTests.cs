@@ -73,7 +73,7 @@ public class BookTests
         var info = book.GetInfo();
 
         // Assert
-        Assert.Equal("\"Titel\" av Författare (2020) - Tillgänglig", info);
+        Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Tillgänglig", info);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class BookTests
         var info = book.GetInfo();
 
         // Assert
-        Assert.Equal("\"Titel\" av Författare (2020) - Utlånad", info);
+        Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Utlånad", info);
     }
 
     [Theory]

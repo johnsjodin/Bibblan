@@ -32,7 +32,7 @@ public class Book : ISearchable
     public string GetInfo()
     {
         string status = IsAvailable ? "Tillgänglig" : "Utlånad";
-        return $"\"{Title}\" av {Author} ({PublishedYear}) - {status}";
+        return $"\"{Title}\" av {Author} (ISBN: {ISBN}) ({PublishedYear}) - {status}";
     }
 
     public bool Matches(string searchTerm)
