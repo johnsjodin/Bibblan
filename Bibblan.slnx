@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="Bibblan.Core/Bibblan.Core.csproj" />
   <Project Path="Bibblan.Tests/Bibblan.Tests.csproj" />
 </Solution>
