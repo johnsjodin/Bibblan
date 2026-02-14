@@ -26,7 +26,7 @@ public class LoanManager
             throw new ArgumentNullException(nameof(loan));
         if (!_loans.Contains(loan))
             throw new ArgumentException("Lånet hittades inte i systemet.", nameof(loan));
-        if (loan.IsReturned())
+        if (loan.IsReturned)
             throw new InvalidOperationException("Detta lån har redan återlämnats.");
         loan.MarkAsReturned(returnDate);
         loan.Book.MarkAsReturned();
@@ -35,6 +35,6 @@ public class LoanManager
 
     public IEnumerable<Loan> GetActiveLoans()
     {
-        return _loans.Where(loan => !loan.IsReturned());
+        return _loans.Where(loan => !loan.IsReturned);
     }
 }

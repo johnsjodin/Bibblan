@@ -14,7 +14,7 @@ public class LoanTests
         var loan = new Loan(book, member, loanDate, dueDate);
 
         // Act
-        var isOverdue = loan.IsOverdue();
+        var isOverdue = loan.IsOverdue;
 
         // Assert
         Assert.True(isOverdue);
@@ -31,7 +31,7 @@ public class LoanTests
         var loan = new Loan(book, member, loanDate, dueDate);
 
         // Act
-        var isOverdue = loan.IsOverdue();
+        var isOverdue = loan.IsOverdue;
 
         // Assert
         Assert.False(isOverdue);
@@ -48,7 +48,7 @@ public class LoanTests
         var loan = new Loan(book, member, loanDate, dueDate);
 
         // Act
-        var isReturned = loan.IsReturned();
+        var isReturned = loan.IsReturned;
 
         // Assert
         Assert.False(isReturned);
@@ -66,7 +66,7 @@ public class LoanTests
 
         // Act
         loan.MarkAsReturned(DateTime.Now);
-        var isReturned = loan.IsReturned();
+        var isReturned = loan.IsReturned;
 
         // Assert
         Assert.True(isReturned);
@@ -175,7 +175,7 @@ public class LoanTests
         loan.MarkAsReturned(DateTime.Now);
 
         // Act
-        var isOverdue = loan.IsOverdue();
+        var isOverdue = loan.IsOverdue;
 
         // Assert
         Assert.False(isOverdue); // Returned loans are never overdue

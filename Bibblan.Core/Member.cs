@@ -38,7 +38,7 @@ public class Member : ISearchable
     public string GetInfo()
     {
         StringBuilder loansInfo = new StringBuilder();
-        var activeLoans = Loans.Where(l => !l.IsReturned()).ToList();
+        var activeLoans = Loans.Where(l => !l.IsReturned).ToList();
 
         if (activeLoans.Count == 0)
         {
@@ -52,7 +52,7 @@ public class Member : ISearchable
             }
         }
 
-        return $"Medlem: {Name} (ID: {MemberId}, E-post: {Email}, Medlem sedan: {MemberSince.ToShortDateString()}" +
+        return $"Medlem: {Name} (ID: {MemberId}, E-post: {Email}, Medlem sedan: {MemberSince.ToShortDateString()})" +
             $"\nLånade böcker:\n{loansInfo}";
     }
 

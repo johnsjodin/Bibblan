@@ -121,7 +121,7 @@ public class LoanManagerTests
 
         // Assert
         Assert.True(result);
-        Assert.True(loan.IsReturned());
+        Assert.True(loan.IsReturned);
         Assert.Equal(returnDate, loan.ReturnDate);
         Assert.True(book.IsAvailable); // Book should be available again
     }

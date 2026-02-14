@@ -23,15 +23,9 @@ public class Loan
         ReturnDate = null;
     }
 
-    public bool IsOverdue()
-    {
-        return ReturnDate == null && DateTime.Now > DueDate;
-    }
+    public bool IsOverdue => ReturnDate == null && DateTime.Now > DueDate;
 
-    public bool IsReturned()
-    {
-        return ReturnDate != null;
-    }
+    public bool IsReturned => ReturnDate != null;
 
     public void MarkAsReturned(DateTime returnDate)
     {
