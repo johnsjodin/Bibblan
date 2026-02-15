@@ -217,6 +217,24 @@ public class LoanTests
     }
 
     [Fact]
+    public void CalculateLateFee_ShouldReturnZero_WhenReturnedBeforeDueDate()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var loanDate = new DateTime(2024, 1, 1);
+        var dueDate = new DateTime(2024, 1, 10);
+        var loan = new Loan(book, member, loanDate, dueDate);
+        loan.MarkAsReturned(new DateTime(2024, 1, 5));
+
+        // Act
+        var fee = loan.CalculateLateFee(10m);
+
+        // Assert
+        Assert.Equal(0m, fee);
+    }
+
+    [Fact]
     public void CalculateLateFee_ShouldThrowException_WhenDailyFeeIsNegative()
     {
         // Arrange

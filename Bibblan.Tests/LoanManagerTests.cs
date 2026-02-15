@@ -270,6 +270,28 @@ public class LoanManagerTests
     }
 
     [Fact]
+    public void ReserveBook_ShouldThrowException_WhenBookIsNull()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(null, member));
+    }
+
+    [Fact]
+    public void ReserveBook_ShouldThrowException_WhenMemberIsNull()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(book, null));
+    }
+
+    [Fact]
     public void CreateLoan_ShouldThrowException_WhenBookReservedByOtherMember()
     {
         // Arrange

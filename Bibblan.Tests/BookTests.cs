@@ -92,6 +92,37 @@ public class BookTests
     }
 
     [Fact]
+    public void GetInfo_ShouldShowUtlånadReserverad_WhenBookIsBorrowedAndReserved()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed();
+        book.MarkAsReserved(member);
+
+        // Act
+        var info = book.GetInfo();
+
+        // Assert
+        Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Utlånad (Reserverad)", info);
+    }
+
+    [Fact]
+    public void GetInfo_ShouldShowReserverad_WhenBookIsReserved()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsReserved(member);
+
+        // Act
+        var info = book.GetInfo();
+
+        // Assert
+        Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Reserverad", info);
+    }
+
+    [Fact]
     public void MarkAsReserved_ShouldSetReservationState()
     {
         // Arrange
@@ -104,6 +135,16 @@ public class BookTests
         // Assert
         Assert.True(book.IsReserved);
         Assert.Equal(member, book.ReservedBy);
+    }
+
+    [Fact]
+    public void MarkAsReserved_ShouldThrowException_WhenMemberIsNull()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => book.MarkAsReserved(null));
     }
 
     [Fact]
