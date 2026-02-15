@@ -1,3 +1,7 @@
+
+<img width="822" height="497" alt="Testresultat" src="https://github.com/user-attachments/assets/80b06eb3-9696-4192-8457-e97128195258" />
+
+
 # 📚 Bibblan - Bibliotekshanteringssystem
 
 Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Bibblan låter dig hantera böcker, medlemmar och utlåning på ett enkelt och effektivt sätt.
