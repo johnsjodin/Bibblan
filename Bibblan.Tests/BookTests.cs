@@ -92,19 +92,15 @@ public class BookTests
     }
 
     [Fact]
-    public void GetInfo_ShouldShowUtlånadReserverad_WhenBookIsBorrowedAndReserved()
+    public void MarkAsReserved_ShouldThrowException_WhenBookIsBorrowed()
     {
         // Arrange
         var book = new Book("123", "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         book.MarkAsBorrowed();
-        book.MarkAsReserved(member);
 
-        // Act
-        var info = book.GetInfo();
-
-        // Assert
-        Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Utlånad (Reserverad)", info);
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => book.MarkAsReserved(member));
     }
 
     [Fact]

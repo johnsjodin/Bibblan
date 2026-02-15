@@ -73,6 +73,8 @@ public class Book : ISearchable
         // Reserverar boken för en viss medlem.
         if (member == null)
             throw new ArgumentNullException(nameof(member));
+        if (!IsAvailable)
+            throw new InvalidOperationException("Boken är utlånad.");
         if (IsReserved)
             throw new InvalidOperationException("Boken är redan reserverad.");
 

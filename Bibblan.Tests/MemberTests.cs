@@ -15,25 +15,14 @@ public class MemberTests
         Assert.Equal("johan@testemail.se", member.Email);
     }
 
-    [Fact]
-    public void Constructor_ShouldThrowException_WhenMemberIdIsEmpty()
+    [Theory]
+    [InlineData("", "Johan Johansson", "johan@testemail.se")]
+    [InlineData("12345", "", "johan@testemail.se")]
+    [InlineData("12345", "Johan Johansson", "")]
+    public void Constructor_ShouldThrowException_WhenRequiredFieldIsEmpty(string memberId, string name, string email)
     {
         // Arrange & Act & Assert
-        Assert.Throws<ArgumentException>(() => new Member("", "Johan Johansson", "johan@testemail.se"));
-    }
-
-    [Fact]
-    public void Constructor_ShouldThrowException_WhenNameIsEmpty()
-    {
-        // Arrange & Act & Assert
-        Assert.Throws<ArgumentException>(() => new Member("12345", "", "johan@testemail.se"));
-    }
-
-    [Fact]
-    public void Constructor_ShouldThrowException_WhenEmailIsEmpty()
-    {
-        // Arrange & Act & Assert
-        Assert.Throws<ArgumentException>(() => new Member("12345", "Johan Johansson", ""));
+        Assert.Throws<ArgumentException>(() => new Member(memberId, name, email));
     }
 
     [Fact]
@@ -151,40 +140,17 @@ public class MemberTests
         Assert.Equal(expected, result);
     }
 
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsNull()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string searchTerm)
     {
         // Arrange
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
 
         // Act
-        var result = member.Matches(null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsEmpty()
-    {
-        // Arrange
-        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-
-        // Act
-        var result = member.Matches("");
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsWhitespace()
-    {
-        // Arrange
-        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-
-        // Act
-        var result = member.Matches("   ");
+        var result = member.Matches(searchTerm);
 
         // Assert
         Assert.False(result);

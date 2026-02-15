@@ -24,9 +24,9 @@
                 Console.WriteLine("9. Statistik");
                 Console.WriteLine("10. Reservera bok");
                 Console.WriteLine("0. Avsluta");
-                Console.Write("Val: ");
+                var choice = ReadRequiredInput("Val: ");
 
-                switch (Console.ReadLine())
+                switch (choice)
                 {
                     case "1":
                         AddBook(library);
@@ -66,15 +66,15 @@
                         break;
                 }
             }
+        }
 
         static void ReserveBook(Library library)
         {
-            Console.Write("Medlems-ID: ");
-            var memberId = Console.ReadLine();
-            Console.Write("ISBN: ");
-            var isbn = Console.ReadLine();
+            // Reserverar en bok för angiven medlem.
+            var memberId = ReadRequiredInput("Medlems-ID: ");
+            var isbn = ReadRequiredInput("ISBN: ");
 
-            var member = library.MemberRegistry.GetMemberById(memberId ?? string.Empty);
+            var member = library.MemberRegistry.GetMemberById(memberId);
             var book = library.BookCatalog.GetAll().FirstOrDefault(b => b.ISBN == isbn);
 
             if (member == null)
@@ -99,28 +99,18 @@
                 Console.WriteLine(ex.Message);
             }
         }
-        }
 
         static void AddBook(Library library)
         {
             // Samlar in bokdata och lägger till i katalogen.
-            Console.Write("ISBN: ");
-            var isbn = Console.ReadLine();
-            Console.Write("Titel: ");
-            var title = Console.ReadLine();
-            Console.Write("Författare: ");
-            var author = Console.ReadLine();
-            Console.Write("Utgivningsår: ");
-
-            if (!int.TryParse(Console.ReadLine(), out var year))
-            {
-                Console.WriteLine("Ogiltigt år.");
-                return;
-            }
+            var isbn = ReadRequiredInput("ISBN: ");
+            var title = ReadRequiredInput("Titel: ");
+            var author = ReadRequiredInput("Författare: ");
+            var year = ReadIntInput("Utgivningsår: ");
 
             try
             {
-                var book = new Book(isbn ?? string.Empty, title ?? string.Empty, author ?? string.Empty, year);
+                var book = new Book(isbn, title, author, year);
                 library.BookCatalog.AddBook(book);
                 Console.WriteLine("Boken är tillagd.");
             }
@@ -133,16 +123,13 @@
         static void AddMember(Library library)
         {
             // Registrerar en ny medlem i systemet.
-            Console.Write("Medlems-ID: ");
-            var memberId = Console.ReadLine();
-            Console.Write("Namn: ");
-            var name = Console.ReadLine();
-            Console.Write("E-post: ");
-            var email = Console.ReadLine();
+            var memberId = ReadRequiredInput("Medlems-ID: ");
+            var name = ReadRequiredInput("Namn: ");
+            var email = ReadRequiredInput("E-post: ");
 
             try
             {
-                var member = new Member(memberId ?? string.Empty, name ?? string.Empty, email ?? string.Empty);
+                var member = new Member(memberId, name, email);
                 library.MemberRegistry.AddMember(member);
                 Console.WriteLine("Medlemmen är tillagd.");
             }
@@ -155,19 +142,11 @@
         static void LoanBook(Library library)
         {
             // Skapar lån om både bok och medlem finns.
-            Console.Write("Medlems-ID: ");
-            var memberId = Console.ReadLine();
-            Console.Write("ISBN: ");
-            var isbn = Console.ReadLine();
-            Console.Write("Antal dagar för lån: ");
+            var memberId = ReadRequiredInput("Medlems-ID: ");
+            var isbn = ReadRequiredInput("ISBN: ");
+            var days = ReadIntInput("Antal dagar för lån: ");
 
-            if (!int.TryParse(Console.ReadLine(), out var days))
-            {
-                Console.WriteLine("Ogiltigt antal dagar.");
-                return;
-            }
-
-            var member = library.MemberRegistry.GetMemberById(memberId ?? string.Empty);
+            var member = library.MemberRegistry.GetMemberById(memberId);
             var book = library.BookCatalog.GetAll().FirstOrDefault(b => b.ISBN == isbn);
 
             if (member == null)
@@ -204,8 +183,7 @@
         static void ReturnBook(Library library)
         {
             // Återlämnar bok och visar eventuell förseningsavgift.
-            Console.Write("ISBN: ");
-            var isbn = Console.ReadLine();
+            var isbn = ReadRequiredInput("ISBN: ");
 
             var loan = library.LoanManager.Loans
                 .FirstOrDefault(l => l.Book.ISBN == isbn && !l.IsReturned);
@@ -235,9 +213,8 @@
         static void SearchBooks(Library library)
         {
             // Söker böcker utifrån titel, författare eller ISBN.
-            Console.Write("Sökterm: ");
-            var term = Console.ReadLine();
-            var results = library.SearchBooks(term ?? string.Empty);
+            var term = ReadRequiredInput("Sökterm: ");
+            var results = library.SearchBooks(term);
             ListBooks(results);
         }
 
@@ -267,6 +244,31 @@
             Console.WriteLine(mostActive == null
                 ? "Ingen aktiv låntagare."
                 : $"Mest aktiv låntagare: {mostActive.Name} ({mostActive.MemberId})");
+        }
+
+        static string ReadRequiredInput(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                var input = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(input))
+                    return input.Trim();
+
+                Console.WriteLine("Fältet får inte vara tomt.");
+            }
+        }
+
+        static int ReadIntInput(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (int.TryParse(Console.ReadLine(), out var value))
+                    return value;
+
+                Console.WriteLine("Ogiltigt nummer.");
+            }
         }
     }
 }

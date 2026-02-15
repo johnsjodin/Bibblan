@@ -292,6 +292,19 @@ public class LoanManagerTests
     }
 
     [Fact]
+    public void ReserveBook_ShouldThrowException_WhenBookIsBorrowed()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed();
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => loanManager.ReserveBook(book, member));
+    }
+
+    [Fact]
     public void CreateLoan_ShouldThrowException_WhenBookReservedByOtherMember()
     {
         // Arrange
