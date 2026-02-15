@@ -29,6 +29,7 @@ public class Loan
 
     public decimal CalculateLateFee(decimal dailyFee, DateTime? asOf = null)
     {
+        // Beräknar förseningsavgift baserat på dagar efter förfallodatum.
         if (dailyFee < 0)
             throw new ArgumentOutOfRangeException(nameof(dailyFee), "Avgiften kan inte vara negativ.");
 

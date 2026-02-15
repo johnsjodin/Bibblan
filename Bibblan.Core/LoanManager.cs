@@ -7,6 +7,7 @@ public class LoanManager
 
     public Loan CreateLoan(Book book, Member member, DateTime loanDate, DateTime dueDate)
     {
+        // Skapar lån och uppdaterar bokstatus.
         if (member == null)
             throw new ArgumentNullException(nameof(member));
         if (book == null)
@@ -26,6 +27,7 @@ public class LoanManager
 
     public void ReserveBook(Book book, Member member)
     {
+        // Markerar boken som reserverad för medlemmen.
         if (member == null)
             throw new ArgumentNullException(nameof(member));
         if (book == null)

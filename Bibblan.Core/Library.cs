@@ -8,6 +8,7 @@ public class Library
 
     public Library(BookCatalog bookCatalog, MemberRegistry memberRegistry, LoanManager loanManager)
     {
+        // Samlar systemets huvudkomponenter bakom en fasad.
         BookCatalog = bookCatalog ?? throw new ArgumentNullException(nameof(bookCatalog));
         MemberRegistry = memberRegistry ?? throw new ArgumentNullException(nameof(memberRegistry));
         LoanManager = loanManager ?? throw new ArgumentNullException(nameof(loanManager));
@@ -16,17 +17,20 @@ public class Library
     // ---------- SÖK ----------
     public IEnumerable<Book> SearchBooks(string term)
     {
+        // Delegerar sökningar till katalogen.
         return BookCatalog.Search(term);
     }
 
     // ---------- STATISTIK ----------
     public int GetTotalBooks()
     {
+        // Räknar alla böcker i katalogen.
         return BookCatalog.GetAll().Count;
     }
 
     public int GetBorrowedBooksCount()
     {
+        // Räknar unika böcker som har aktiva lån.
         return LoanManager
             .GetActiveLoans()
             .Select(l => l.Book)
@@ -36,6 +40,7 @@ public class Library
 
     public Member? GetMostActiveBorrower()
     {
+        // Hittar medlem med flest aktiva lån.
         return LoanManager
             .GetActiveLoans()
             .GroupBy(l => l.Member)

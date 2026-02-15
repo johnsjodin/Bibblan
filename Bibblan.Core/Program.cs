@@ -11,6 +11,7 @@
 
             while (running)
             {
+                // Enkel konsolmeny för bibliotekets funktioner.
                 Console.WriteLine("\n--- Bibliotekssystem ---");
                 Console.WriteLine("1. Lägg till bok");
                 Console.WriteLine("2. Lista böcker");
@@ -102,6 +103,7 @@
 
         static void AddBook(Library library)
         {
+            // Samlar in bokdata och lägger till i katalogen.
             Console.Write("ISBN: ");
             var isbn = Console.ReadLine();
             Console.Write("Titel: ");
@@ -130,6 +132,7 @@
 
         static void AddMember(Library library)
         {
+            // Registrerar en ny medlem i systemet.
             Console.Write("Medlems-ID: ");
             var memberId = Console.ReadLine();
             Console.Write("Namn: ");
@@ -151,6 +154,7 @@
 
         static void LoanBook(Library library)
         {
+            // Skapar lån om både bok och medlem finns.
             Console.Write("Medlems-ID: ");
             var memberId = Console.ReadLine();
             Console.Write("ISBN: ");
@@ -199,6 +203,7 @@
 
         static void ReturnBook(Library library)
         {
+            // Återlämnar bok och visar eventuell förseningsavgift.
             Console.Write("ISBN: ");
             var isbn = Console.ReadLine();
 
@@ -229,6 +234,7 @@
 
         static void SearchBooks(Library library)
         {
+            // Söker böcker utifrån titel, författare eller ISBN.
             Console.Write("Sökterm: ");
             var term = Console.ReadLine();
             var results = library.SearchBooks(term ?? string.Empty);
@@ -237,6 +243,7 @@
 
         static void ListBooks(IEnumerable<Book> books)
         {
+            // Skriver ut bokinformation eller meddelar om listan är tom.
             var any = false;
             foreach (var book in books)
             {
@@ -252,6 +259,7 @@
 
         static void ShowStatistics(Library library)
         {
+            // Visar statistik över böcker och aktiva lån.
             Console.WriteLine($"Totalt antal böcker: {library.GetTotalBooks()}");
             Console.WriteLine($"Antal utlånade böcker: {library.GetBorrowedBooksCount()}");
 

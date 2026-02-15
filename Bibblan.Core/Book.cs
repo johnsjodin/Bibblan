@@ -7,6 +7,7 @@ public class Book : ISearchable
     public string Author { get; private set; }
     public int PublishedYear { get; private set; }
     public bool IsAvailable { get; private set; }
+    // Bokreservationens status och vem som reserverat.
     public bool IsReserved { get; private set; }
     public Member? ReservedBy { get; private set; }
 
@@ -35,6 +36,7 @@ public class Book : ISearchable
 
     public string GetInfo()
     {
+        // Returnerar kort statusrad för utskrift.
         string status = IsAvailable
             ? (IsReserved ? "Reserverad" : "Tillgänglig")
             : (IsReserved ? "Utlånad (Reserverad)" : "Utlånad");
@@ -54,6 +56,7 @@ public class Book : ISearchable
     // Metoder som LoanManager kan använda
     public void MarkAsBorrowed()
     {
+        // Markerar boken som utlånad.
         if (!IsAvailable)
             throw new InvalidOperationException("Boken är redan utlånad.");
 
@@ -67,6 +70,7 @@ public class Book : ISearchable
 
     public void MarkAsReserved(Member member)
     {
+        // Reserverar boken för en viss medlem.
         if (member == null)
             throw new ArgumentNullException(nameof(member));
         if (IsReserved)
@@ -78,6 +82,7 @@ public class Book : ISearchable
 
     public void ClearReservation()
     {
+        // Rensar reservationen när den inte längre gäller.
         IsReserved = false;
         ReservedBy = null;
     }

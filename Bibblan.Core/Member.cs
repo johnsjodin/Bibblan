@@ -16,6 +16,7 @@ public class Member : ISearchable
 
     public Member(string memberId, string name, string email)
     {
+        // Validerar och skapar en ny medlem.
         if (string.IsNullOrWhiteSpace(memberId))
             throw new ArgumentException("Medlems-ID får inte vara tomt.", nameof(memberId));
         if (string.IsNullOrWhiteSpace(name))
@@ -30,6 +31,7 @@ public class Member : ISearchable
 
     internal void AddLoan(Loan loan)
     {
+        // Lägger till ett lån kopplat till medlemmen.
         if (loan == null)
             throw new ArgumentNullException(nameof(loan));
         _loans.Add(loan);
@@ -37,6 +39,7 @@ public class Member : ISearchable
 
     public string GetInfo()
     {
+        // Bygger en översikt av medlem och aktiva lån.
         StringBuilder loansInfo = new StringBuilder();
         var activeLoans = Loans.Where(l => !l.IsReturned).ToList();
 
@@ -58,6 +61,7 @@ public class Member : ISearchable
 
     public bool Matches(string searchTerm)
     {
+        // Matchar sökterm mot medlemsuppgifter.
         if (string.IsNullOrWhiteSpace(searchTerm))
             return false;
 

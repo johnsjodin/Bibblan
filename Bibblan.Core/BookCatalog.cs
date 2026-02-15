@@ -6,6 +6,7 @@ public class BookCatalog
 
     public void AddBook(Book book)
     {
+        // Lägger till en bok i katalogen efter validering.
         if (book == null)
             throw new ArgumentNullException(nameof(book));
 
@@ -14,6 +15,7 @@ public class BookCatalog
 
     public bool RemoveBook(string isbn)
     {
+        // Försöker ta bort bok baserat på ISBN.
         if (string.IsNullOrWhiteSpace(isbn))
             throw new ArgumentException("ISBN får inte vara tomt.", nameof(isbn));
 
@@ -27,16 +29,19 @@ public class BookCatalog
 
     public IEnumerable<Book> Search(string term)
     {
+        // Filtrerar böcker utifrån sökterm.
         return _books.Where(b => b.Matches(term));
     }
 
     public IEnumerable<Book> SortByTitle()
     {
+        // Sorterar böcker alfabetiskt på titel.
         return _books.OrderBy(b => b.Title);
     }
 
     public IEnumerable<Book> SortByYear()
     {
+        // Sorterar böcker efter utgivningsår.
         return _books.OrderBy(b => b.PublishedYear);
     }
 }
