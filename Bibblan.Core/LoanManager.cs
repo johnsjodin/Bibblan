@@ -13,11 +13,25 @@ public class LoanManager
             throw new ArgumentNullException(nameof(book));
         if (dueDate <= DateTime.Now)
             throw new ArgumentException("Återlämningsdatum måste vara i framtiden.", nameof(dueDate));
+        if (book.IsReserved && book.ReservedBy != member)
+            throw new InvalidOperationException("Boken är reserverad av en annan medlem.");
         var loan = new Loan(book, member, loanDate, dueDate);
         _loans.Add(loan);
         member.AddLoan(loan);
         book.MarkAsBorrowed();
+        if (book.IsReserved)
+            book.ClearReservation();
         return loan;
+    }
+
+    public void ReserveBook(Book book, Member member)
+    {
+        if (member == null)
+            throw new ArgumentNullException(nameof(member));
+        if (book == null)
+            throw new ArgumentNullException(nameof(book));
+
+        book.MarkAsReserved(member);
     }
 
     public bool ReturnBook(Loan loan, DateTime returnDate)

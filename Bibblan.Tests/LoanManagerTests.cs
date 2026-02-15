@@ -252,4 +252,55 @@ public class LoanManagerTests
         Assert.Contains(loan1, activeLoans);
         Assert.Contains(loan2, activeLoans);
     }
+
+    [Fact]
+    public void ReserveBook_ShouldMarkBookAsReserved()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+
+        // Act
+        loanManager.ReserveBook(book, member);
+
+        // Assert
+        Assert.True(book.IsReserved);
+        Assert.Equal(member, book.ReservedBy);
+    }
+
+    [Fact]
+    public void CreateLoan_ShouldThrowException_WhenBookReservedByOtherMember()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member1 = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var member2 = new Member("67890", "Anna Andersson", "anna@testemail.se");
+        var loanDate = DateTime.Now;
+        var dueDate = loanDate.AddDays(14);
+        loanManager.ReserveBook(book, member1);
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => loanManager.CreateLoan(book, member2, loanDate, dueDate));
+    }
+
+    [Fact]
+    public void CreateLoan_ShouldClearReservation_WhenReservedBySameMember()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var loanDate = DateTime.Now;
+        var dueDate = loanDate.AddDays(14);
+        loanManager.ReserveBook(book, member);
+
+        // Act
+        loanManager.CreateLoan(book, member, loanDate, dueDate);
+
+        // Assert
+        Assert.False(book.IsReserved);
+        Assert.Null(book.ReservedBy);
+    }
 }

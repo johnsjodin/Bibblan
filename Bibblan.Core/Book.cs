@@ -7,6 +7,8 @@ public class Book : ISearchable
     public string Author { get; private set; }
     public int PublishedYear { get; private set; }
     public bool IsAvailable { get; private set; }
+    public bool IsReserved { get; private set; }
+    public Member? ReservedBy { get; private set; }
 
     public Book(string isbn, string title, string author, int publishedYear)
     {
@@ -27,11 +29,15 @@ public class Book : ISearchable
         Author = author;
         PublishedYear = publishedYear;
         IsAvailable = true;
+        IsReserved = false;
+        ReservedBy = null;
     }
 
     public string GetInfo()
     {
-        string status = IsAvailable ? "Tillgänglig" : "Utlånad";
+        string status = IsAvailable
+            ? (IsReserved ? "Reserverad" : "Tillgänglig")
+            : (IsReserved ? "Utlånad (Reserverad)" : "Utlånad");
         return $"\"{Title}\" av {Author} (ISBN: {ISBN}) ({PublishedYear}) - {status}";
     }
 
@@ -40,11 +46,9 @@ public class Book : ISearchable
         if (string.IsNullOrWhiteSpace(searchTerm))
             return false;
 
-        searchTerm = searchTerm.ToLower();
-
-        return Title.ToLower().Contains(searchTerm)
-            || Author.ToLower().Contains(searchTerm)
-            || ISBN.ToLower().Contains(searchTerm);
+        return Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || Author.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || ISBN.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
 
     // Metoder som LoanManager kan använda
@@ -59,5 +63,22 @@ public class Book : ISearchable
     public void MarkAsReturned()
     {
         IsAvailable = true;
+    }
+
+    public void MarkAsReserved(Member member)
+    {
+        if (member == null)
+            throw new ArgumentNullException(nameof(member));
+        if (IsReserved)
+            throw new InvalidOperationException("Boken är redan reserverad.");
+
+        IsReserved = true;
+        ReservedBy = member;
+    }
+
+    public void ClearReservation()
+    {
+        IsReserved = false;
+        ReservedBy = null;
     }
 }

@@ -2,6 +2,8 @@
 {
     internal class Program
     {
+        private const decimal DailyLateFee = 10m;
+
         static void Main(string[] args)
         {
             var library = new Library(new BookCatalog(), new MemberRegistry(), new LoanManager());
@@ -19,6 +21,7 @@
                 Console.WriteLine("7. Sortera böcker (titel)");
                 Console.WriteLine("8. Sortera böcker (år)");
                 Console.WriteLine("9. Statistik");
+                Console.WriteLine("10. Reservera bok");
                 Console.WriteLine("0. Avsluta");
                 Console.Write("Val: ");
 
@@ -51,6 +54,9 @@
                     case "9":
                         ShowStatistics(library);
                         break;
+                    case "10":
+                        ReserveBook(library);
+                        break;
                     case "0":
                         running = false;
                         break;
@@ -59,6 +65,39 @@
                         break;
                 }
             }
+
+        static void ReserveBook(Library library)
+        {
+            Console.Write("Medlems-ID: ");
+            var memberId = Console.ReadLine();
+            Console.Write("ISBN: ");
+            var isbn = Console.ReadLine();
+
+            var member = library.MemberRegistry.GetMemberById(memberId ?? string.Empty);
+            var book = library.BookCatalog.GetAll().FirstOrDefault(b => b.ISBN == isbn);
+
+            if (member == null)
+            {
+                Console.WriteLine("Medlemmen hittades inte.");
+                return;
+            }
+
+            if (book == null)
+            {
+                Console.WriteLine("Boken hittades inte.");
+                return;
+            }
+
+            try
+            {
+                library.LoanManager.ReserveBook(book, member);
+                Console.WriteLine("Boken är reserverad.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
         }
 
         static void AddBook(Library library)
@@ -175,7 +214,12 @@
             try
             {
                 library.LoanManager.ReturnBook(loan, DateTime.Now);
+                var fee = loan.CalculateLateFee(DailyLateFee);
                 Console.WriteLine("Boken är återlämnad.");
+                if (fee > 0)
+                {
+                    Console.WriteLine($"Förseningsavgift: {fee} kr");
+                }
             }
             catch (Exception ex)
             {

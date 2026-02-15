@@ -15,6 +15,7 @@ public class BookTests
         Assert.Equal("Testförfattare", book.Author);
         Assert.Equal(2024, book.PublishedYear);
         Assert.True(book.IsAvailable);
+        Assert.False(book.IsReserved);
     }
 
     [Fact]
@@ -88,6 +89,49 @@ public class BookTests
 
         // Assert
         Assert.Equal("\"Titel\" av Författare (ISBN: 123) (2020) - Utlånad", info);
+    }
+
+    [Fact]
+    public void MarkAsReserved_ShouldSetReservationState()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+
+        // Act
+        book.MarkAsReserved(member);
+
+        // Assert
+        Assert.True(book.IsReserved);
+        Assert.Equal(member, book.ReservedBy);
+    }
+
+    [Fact]
+    public void MarkAsReserved_ShouldThrowException_WhenAlreadyReserved()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsReserved(member);
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => book.MarkAsReserved(member));
+    }
+
+    [Fact]
+    public void ClearReservation_ShouldResetReservationState()
+    {
+        // Arrange
+        var book = new Book("123", "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsReserved(member);
+
+        // Act
+        book.ClearReservation();
+
+        // Assert
+        Assert.False(book.IsReserved);
+        Assert.Null(book.ReservedBy);
     }
 
     [Theory]

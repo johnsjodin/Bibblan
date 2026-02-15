@@ -27,6 +27,19 @@ public class Loan
 
     public bool IsReturned => ReturnDate != null;
 
+    public decimal CalculateLateFee(decimal dailyFee, DateTime? asOf = null)
+    {
+        if (dailyFee < 0)
+            throw new ArgumentOutOfRangeException(nameof(dailyFee), "Avgiften kan inte vara negativ.");
+
+        var referenceDate = ReturnDate ?? asOf ?? DateTime.Now;
+        if (referenceDate <= DueDate)
+            return 0m;
+
+        var daysLate = (referenceDate.Date - DueDate.Date).Days;
+        return daysLate * dailyFee;
+    }
+
     public void MarkAsReturned(DateTime returnDate)
     {
         if (ReturnDate != null)
