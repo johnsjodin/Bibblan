@@ -77,34 +77,17 @@ public class BookCatalogTests
         Assert.False(result);
     }
 
-    [Fact]
-    public void RemoveBook_ShouldThrowException_WhenIsbnIsNull()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void RemoveBook_ShouldThrowException_WhenIsbnIsInvalid(string isbn)
     {
         // Arrange
         var catalog = new BookCatalog();
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => catalog.RemoveBook(null));
-    }
-
-    [Fact]
-    public void RemoveBook_ShouldThrowException_WhenIsbnIsEmpty()
-    {
-        // Arrange
-        var catalog = new BookCatalog();
-
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => catalog.RemoveBook(""));
-    }
-
-    [Fact]
-    public void RemoveBook_ShouldThrowException_WhenIsbnIsWhitespace()
-    {
-        // Arrange
-        var catalog = new BookCatalog();
-
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => catalog.RemoveBook("   "));
+        Assert.Throws<ArgumentException>(() => catalog.RemoveBook(isbn));
     }
 
     [Fact]

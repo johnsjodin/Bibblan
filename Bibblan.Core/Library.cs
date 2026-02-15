@@ -14,14 +14,12 @@ public class Library
         LoanManager = loanManager ?? throw new ArgumentNullException(nameof(loanManager));
     }
 
-    // ---------- SÖK ----------
     public IEnumerable<Book> SearchBooks(string term)
     {
         // Delegerar sökningar till katalogen.
         return BookCatalog.Search(term);
     }
 
-    // ---------- STATISTIK ----------
     public int GetTotalBooks()
     {
         // Räknar alla böcker i katalogen.

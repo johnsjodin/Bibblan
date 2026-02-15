@@ -78,34 +78,17 @@ public class MemberRegistryTests
         Assert.Null(result);
     }
 
-    [Fact]
-    public void GetMemberById_ShouldThrowException_WhenMemberIdIsNull()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void GetMemberById_ShouldThrowException_WhenMemberIdIsInvalid(string memberId)
     {
         // Arrange
         var registry = new MemberRegistry();
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => registry.GetMemberById(null));
-    }
-
-    [Fact]
-    public void GetMemberById_ShouldThrowException_WhenMemberIdIsEmpty()
-    {
-        // Arrange
-        var registry = new MemberRegistry();
-
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => registry.GetMemberById(""));
-    }
-
-    [Fact]
-    public void GetMemberById_ShouldThrowException_WhenMemberIdIsWhitespace()
-    {
-        // Arrange
-        var registry = new MemberRegistry();
-
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => registry.GetMemberById("   "));
+        Assert.Throws<ArgumentException>(() => registry.GetMemberById(memberId));
     }
 
     [Fact]

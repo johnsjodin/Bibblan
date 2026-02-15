@@ -176,40 +176,17 @@ public class BookTests
         Assert.True(result);
     }
 
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsNull()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string searchTerm)
     {
         // Arrange
         var book = new Book("123", "Titel", "Författare", 2020);
 
         // Act
-        var result = book.Matches(null);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsEmpty()
-    {
-        // Arrange
-        var book = new Book("123", "Titel", "Författare", 2020);
-
-        // Act
-        var result = book.Matches("");
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsWhitespace()
-    {
-        // Arrange
-        var book = new Book("123", "Titel", "Författare", 2020);
-
-        // Act
-        var result = book.Matches("   ");
+        var result = book.Matches(searchTerm);
 
         // Assert
         Assert.False(result);
