@@ -13,7 +13,7 @@ public class LoanManager
         if (book == null)
             throw new ArgumentNullException(nameof(book));
         if (dueDate <= DateTime.Now)
-            throw new ArgumentException("Återlämningsdatum måste vara i framtiden.", nameof(dueDate));
+            throw new ArgumentException("Återlämningsdatum måste vara i framtiden.");
         if (book.IsReserved && book.ReservedBy != member)
             throw new InvalidOperationException("Boken är reserverad av en annan medlem.");
         var loan = new Loan(book, member, loanDate, dueDate);
@@ -41,7 +41,7 @@ public class LoanManager
         if (loan == null)
             throw new ArgumentNullException(nameof(loan));
         if (!_loans.Contains(loan))
-            throw new ArgumentException("Lånet hittades inte i systemet.", nameof(loan));
+            throw new ArgumentException("Lånet hittades inte i systemet.");
         if (loan.IsReturned)
             throw new InvalidOperationException("Detta lån har redan återlämnats.");
         loan.MarkAsReturned(returnDate);
