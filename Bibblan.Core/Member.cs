@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace Bibblan.Core;
 
@@ -65,10 +66,8 @@ public class Member : ISearchable
         if (string.IsNullOrWhiteSpace(searchTerm))
             return false;
 
-        searchTerm = searchTerm.ToLower();
-
-        return Name.ToLower().Contains(searchTerm)
-            || Email.ToLower().Contains(searchTerm)
-            || MemberId.ToLower().Contains(searchTerm);
+        return Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || MemberId.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
 }

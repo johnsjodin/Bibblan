@@ -7,7 +7,6 @@ public class Book : ISearchable
     public string Author { get; private set; }
     public int PublishedYear { get; private set; }
     public bool IsAvailable { get; private set; }
-    // Bokreservationens status och vem som reserverat.
     public bool IsReserved { get; private set; }
     public Member? ReservedBy { get; private set; }
 
@@ -53,7 +52,6 @@ public class Book : ISearchable
             || ISBN.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
     }
 
-    // Metoder som LoanManager kan använda
     public void MarkAsBorrowed()
     {
         // Markerar boken som utlånad.
