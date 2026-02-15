@@ -121,15 +121,15 @@ public class MemberTests
         member.AddLoan(loan1);
         member.AddLoan(loan2);
 
-        // Return the first book
+        // Lämna tillbaka den första boken
         loan1.MarkAsReturned(DateTime.Now);
 
         // Act
         var info = member.GetInfo();
 
         // Assert
-        Assert.DoesNotContain("Harry Potter", info); // Returned book should not appear
-        Assert.Contains("Sagan om ringen", info); // Active loan should appear
+        Assert.DoesNotContain("Harry Potter", info); // Återlämnad bok ska inte visas
+        Assert.Contains("Sagan om ringen", info); // Aktivt lån ska visas
         Assert.Contains("J.R.R. Tolkien", info);
     }
 

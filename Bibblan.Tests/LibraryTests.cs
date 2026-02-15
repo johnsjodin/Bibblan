@@ -249,7 +249,7 @@ public class LibraryTests
         var mostActive = library.GetMostActiveBorrower();
 
         // Assert
-        Assert.Equal(member1, mostActive); // member1 has 2 loans, member2 has 1
+        Assert.Equal(member1, mostActive); // member1 har 2 lån medan member2 har 1 lån
     }
 
     [Fact]

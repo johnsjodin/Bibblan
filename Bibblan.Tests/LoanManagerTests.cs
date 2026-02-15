@@ -63,7 +63,7 @@ public class LoanManagerTests
         var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-5);
-        var dueDate = DateTime.Now.AddDays(-1); // In the past
+        var dueDate = DateTime.Now.AddDays(-1); // I det förflutna
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => 
@@ -123,7 +123,7 @@ public class LoanManagerTests
         Assert.True(result);
         Assert.True(loan.IsReturned);
         Assert.Equal(returnDate, loan.ReturnDate);
-        Assert.True(book.IsAvailable); // Book should be available again
+        Assert.True(book.IsAvailable); // Boken ska vara tillgänglig igen
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class LoanManagerTests
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
-        var loan = new Loan(book, member, loanDate, dueDate); // Not added to loanManager
+        var loan = new Loan(book, member, loanDate, dueDate); // Ej skapad via LoanManager
         var returnDate = DateTime.Now;
 
         // Act & Assert
