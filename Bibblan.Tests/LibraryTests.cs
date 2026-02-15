@@ -97,6 +97,8 @@ public class LibraryTests
         Assert.Empty(results);
     }
 
+    // Tester för statistikmetoderna
+
     [Fact]
     public void GetTotalBooks_ShouldReturnZero_WhenCatalogIsEmpty()
     {
@@ -273,7 +275,7 @@ public class LibraryTests
         var loan2 = loanManager.CreateLoan(book2, member1, loanDate, dueDate);
         loanManager.CreateLoan(book3, member2, loanDate, dueDate);
 
-        // Return member1's loans
+        // Lämna tillbaka båda lån för member1 så att member2 blir den mest aktiva låntagaren
         loanManager.ReturnBook(loan1, DateTime.Now);
         loanManager.ReturnBook(loan2, DateTime.Now);
 
@@ -281,6 +283,6 @@ public class LibraryTests
         var mostActive = library.GetMostActiveBorrower();
 
         // Assert
-        Assert.Equal(member2, mostActive); // member2 is now the only active borrower
+        Assert.Equal(member2, mostActive); // member2 är nu den mest aktiva låntagaren
     }
 }
