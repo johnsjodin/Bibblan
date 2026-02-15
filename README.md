@@ -6,7 +6,7 @@ Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Bibblan låter d
 
 ### 📖 Bokhantering
 - Lägg till, ta bort och sök efter böcker
-- Spåra bokstatus (tillgänglig/utlånad)
+- Spåra bokstatus (tillgänglig/utlånad/reserverad)
 - Sortera böcker efter titel eller utgivningsår
 - Validering av ISBN, titel, författare och utgivningsår
 
@@ -19,8 +19,12 @@ Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Bibblan låter d
 ### 🔄 Lånehantering
 - Skapa nya lån med automatisk validering
 - Returnera böcker med tidsstämplar
-- Spåra försenade lån
+- Spåra försenade lån och beräkna förseningsavgift
 - Visa endast aktiva lån
+
+### 🗓️ Reservationer
+- Reservera böcker per medlem
+- Blockerar utlån om boken är reserverad av annan medlem
 
 ### 📊 Statistik
 - Totalt antal böcker i katalogen
