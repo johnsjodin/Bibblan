@@ -183,8 +183,8 @@ public class LoanManagerTests
         var loanManager = new LoanManager();
         var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        var loanDate = new DateTime(2024, 1, 1);
-        var dueDate = new DateTime(2024, 1, 10);
+        var loanDate = DateTime.Now;
+        var dueDate = loanDate.AddDays(10);
         var loan = loanManager.CreateLoan(book, member, loanDate, dueDate);
         var returnDate = dueDate.AddDays(daysLate);
 
@@ -202,8 +202,8 @@ public class LoanManagerTests
         var loanManager = new LoanManager();
         var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        var loanDate = new DateTime(2024, 1, 1);
-        var dueDate = new DateTime(2024, 1, 10);
+        var loanDate = DateTime.Now;
+        var dueDate = loanDate.AddDays(10);
         var loan = loanManager.CreateLoan(book, member, loanDate, dueDate);
         var returnDate = new DateTime(2024, 1, 5);
 
