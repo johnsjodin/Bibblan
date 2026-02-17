@@ -99,41 +99,25 @@ dotnet test
 
 ## 💡 Användningsexempel
 
-```csharp
-// Skapa komponenter
-var bookCatalog = new BookCatalog();
-var memberRegistry = new MemberRegistry();
-var loanManager = new LoanManager();
-var library = new Library(bookCatalog, memberRegistry, loanManager);
+Kör programmet och följ menyvalen i konsolen:
 
-// Lägg till böcker
-var book = new Book("978-91-0-012345-6", "Harry Potter", "J.K. Rowling", 1997);
-bookCatalog.AddBook(book);
-
-// Registrera medlem
-var member = new Member("12345", "Johan Johansson", "johan@email.com");
-memberRegistry.AddMember(member);
-
-// Skapa lån
-var loanDate = DateTime.Now;
-var dueDate = loanDate.AddDays(14);
-var loan = loanManager.CreateLoan(book, member, loanDate, dueDate);
-
-// Sök böcker
-var harryPotterBooks = library.SearchBooks("Harry Potter");
-
-// Returnera bok
-loanManager.ReturnBook(loan, DateTime.Now);
-
-// Visa statistik
-Console.WriteLine($"Totalt antal böcker: {library.GetTotalBooks()}");
-Console.WriteLine($"Utlånade böcker: {library.GetBorrowedBooksCount()}");
-var mostActive = library.GetMostActiveBorrower();
-if (mostActive != null)
-{
-    Console.WriteLine($"Mest aktiv låntagare: {mostActive.Name}");
-}
+```text
+--- Bibliotekssystem ---
+1. Lägg till bok
+2. Lista böcker
+3. Lägg till medlem
+4. Låna bok
+5. Återlämna bok
+6. Sök böcker
+7. Sortera böcker (titel)
+8. Sortera böcker (år)
+9. Statistik
+10. Reservera bok
+11. Sätt förseningsavgift
+0. Avsluta
 ```
+
+Exempel: välj menyval `1` för att lägga till en bok och följ inmatningsstegen.
 
 ## 🧪 Testning
 
