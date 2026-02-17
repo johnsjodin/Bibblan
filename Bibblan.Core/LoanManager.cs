@@ -2,6 +2,7 @@
 
 public class LoanManager
 {
+    public decimal DailyLateFee { get; set; } = 10m;
     private readonly List<Loan> _loans = new List<Loan>();
     public IReadOnlyList<Loan> Loans => _loans;
 
@@ -36,17 +37,17 @@ public class LoanManager
         book.MarkAsReserved(member);
     }
 
-    public bool ReturnBook(Loan loan, DateTime returnDate)
+    public decimal ReturnBook(Loan loan, DateTime returnDate)
     {
         if (loan == null)
             throw new ArgumentNullException(nameof(loan));
         if (!_loans.Contains(loan))
-            throw new ArgumentException("Lånet hittades inte i systemet.");
+            throw new ArgumentException("Lånet hittades inte i systemet.", nameof(loan));
         if (loan.IsReturned)
             throw new InvalidOperationException("Detta lån har redan återlämnats.");
         loan.MarkAsReturned(returnDate);
         loan.Book.MarkAsReturned();
-        return true;
+        return loan.CalculateLateFee(DailyLateFee);
     }
 
     public IEnumerable<Loan> GetActiveLoans()

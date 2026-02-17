@@ -2,7 +2,6 @@
 {
     internal class Program
     {
-        private const decimal DailyLateFee = 10m;
 
         static void Main(string[] args)
         {
@@ -23,6 +22,7 @@
                 Console.WriteLine("8. Sortera böcker (år)");
                 Console.WriteLine("9. Statistik");
                 Console.WriteLine("10. Reservera bok");
+                Console.WriteLine("11. Sätt förseningsavgift");
                 Console.WriteLine("0. Avsluta");
                 var choice = ReadRequiredInput("Val: ");
 
@@ -57,6 +57,9 @@
                         break;
                     case "10":
                         ReserveBook(library);
+                        break;
+                    case "11":
+                        SetLateFee(library);
                         break;
                     case "0":
                         running = false;
@@ -196,8 +199,7 @@
 
             try
             {
-                library.LoanManager.ReturnBook(loan, DateTime.Now);
-                var fee = loan.CalculateLateFee(DailyLateFee);
+                var fee = library.LoanManager.ReturnBook(loan, DateTime.Now);
                 Console.WriteLine("Boken är återlämnad.");
                 if (fee > 0)
                 {
@@ -246,6 +248,20 @@
                 : $"Mest aktiv låntagare: {mostActive.Name} ({mostActive.MemberId})");
         }
 
+        static void SetLateFee(Library library)
+        {
+            // Ställer in daglig förseningsavgift i systemet.
+            var fee = ReadDecimalInput("Förseningsavgift per dag (SEK): ");
+            if (fee < 0)
+            {
+                Console.WriteLine("Avgiften kan inte vara negativ.");
+                return;
+            }
+
+            library.LoanManager.DailyLateFee = fee;
+            Console.WriteLine($"Ny förseningsavgift: {fee} kr per dag.");
+        }
+
         static string ReadRequiredInput(string prompt)
         {
             while (true)
@@ -265,6 +281,18 @@
             {
                 Console.Write(prompt);
                 if (int.TryParse(Console.ReadLine(), out var value))
+                    return value;
+
+                Console.WriteLine("Ogiltigt nummer.");
+            }
+        }
+
+        static decimal ReadDecimalInput(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (decimal.TryParse(Console.ReadLine(), out var value))
                     return value;
 
                 Console.WriteLine("Ogiltigt nummer.");

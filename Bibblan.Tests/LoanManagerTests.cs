@@ -105,7 +105,7 @@ public class LoanManagerTests
     }
 
     [Fact]
-    public void ReturnBook_ShouldReturnTrueAndMarkLoanAsReturned()
+    public void ReturnBook_ShouldReturnLateFeeAndMarkLoanAsReturned()
     {
         // Arrange
         var loanManager = new LoanManager();
@@ -120,7 +120,7 @@ public class LoanManagerTests
         var result = loanManager.ReturnBook(loan, returnDate);
 
         // Assert
-        Assert.True(result);
+        Assert.Equal(0m, result);
         Assert.True(loan.IsReturned);
         Assert.Equal(returnDate, loan.ReturnDate);
         Assert.True(book.IsAvailable); // Boken ska vara tillgänglig igen
@@ -171,6 +171,47 @@ public class LoanManagerTests
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => 
             loanManager.ReturnBook(loan, returnDate));
+    }
+
+    [Theory]
+    [InlineData(1, 10)]
+    [InlineData(3, 30)]
+    [InlineData(7, 70)]
+    public void ReturnBook_ShouldReturnLateFee_WhenReturnedAfterDueDate(int daysLate, int expectedFee)
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var loanDate = new DateTime(2024, 1, 1);
+        var dueDate = new DateTime(2024, 1, 10);
+        var loan = loanManager.CreateLoan(book, member, loanDate, dueDate);
+        var returnDate = dueDate.AddDays(daysLate);
+
+        // Act
+        var fee = loanManager.ReturnBook(loan, returnDate);
+
+        // Assert
+        Assert.Equal(expectedFee, decimal.ToInt32(fee));
+    }
+
+    [Fact]
+    public void ReturnBook_ShouldReturnZero_WhenReturnedBeforeDueDate()
+    {
+        // Arrange
+        var loanManager = new LoanManager();
+        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var loanDate = new DateTime(2024, 1, 1);
+        var dueDate = new DateTime(2024, 1, 10);
+        var loan = loanManager.CreateLoan(book, member, loanDate, dueDate);
+        var returnDate = new DateTime(2024, 1, 5);
+
+        // Act
+        var fee = loanManager.ReturnBook(loan, returnDate);
+
+        // Assert
+        Assert.Equal(0m, fee);
     }
 
     [Fact]
