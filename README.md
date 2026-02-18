@@ -1,5 +1,6 @@
 
-<img width="822" height="497" alt="Testresultat" src="https://github.com/user-attachments/assets/80b06eb3-9696-4192-8457-e97128195258" />
+<img width="578" height="227" alt="Testresultat" src="https://github.com/user-attachments/assets/61b7a73b-8453-46b1-b530-6ebf82b7b0ed" />
+
 
 
 # 📚 Bibblan - Bibliotekshanteringssystem
