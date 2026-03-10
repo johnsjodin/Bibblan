@@ -151,12 +151,41 @@ else
                             </button>
                         </div>
                     }
+                    else if (_book.IsAvailable && _book.IsReserved)
+                    {
+                        <div class="d-grid gap-2">
+                            <div class="alert alert-warning">
+                                <strong>Reserverad</strong> av @_book.ReservedBy?.Name
+                            </div>
+                            <button class="btn btn-success" @onclick="LoanToReservedMember">
+                                📤 Låna ut till @_book.ReservedBy?.Name
+                            </button>
+                            <button class="btn btn-outline-secondary" @onclick="CancelReservation">
+                                ❌ Avbryt reservation
+                            </button>
+                        </div>
+                    }
                     else if (!_book.IsAvailable)
                     {
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary" @onclick="ReturnBook">
                                 📥 Återlämna
                             </button>
+                            @if (!_book.IsReserved)
+                            {
+                                <button class="btn btn-warning" @onclick="ShowReserveModal">
+                                    📌 Reservera
+                                </button>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info small mt-2 mb-2">
+                                    <strong>Reserverad</strong> av @_book.ReservedBy?.Name
+                                </div>
+                                <button class="btn btn-outline-secondary btn-sm" @onclick="CancelReservation">
+                                    ❌ Avbryt reservation
+                                </button>
+                            }
                         </div>
                     }
 
@@ -209,6 +238,40 @@ else
             </div>
         </div>
     }
+
+    @if (_showReserveModal)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reservera: @_book.Title</h5>
+                        <button type="button" class="btn-close" @onclick="CloseReserveModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Boken är för tillfället utlånad. Välj en medlem som vill reservera boken.</p>
+                        <p class="text-muted small">OBS: Den som redan lånar boken kan inte reservera den.</p>
+                        <div class="mb-3">
+                            <label class="form-label">Välj medlem som reserverar</label>
+                            <select class="form-select" @bind="_selectedMemberId">
+                                <option value="0">-- Välj medlem --</option>
+                                @foreach (var member in _members)
+                                {
+                                    <option value="@member.Id">@member.Name (@member.MemberId)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseReserveModal">Avbryt</button>
+                        <button type="button" class="btn btn-warning" @onclick="ReserveBook" disabled="@(_selectedMemberId == 0)">
+                            Reservera
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 }
 
 @code {
@@ -223,6 +286,7 @@ else
     private bool _isError = false;
 
     private bool _showLoanModal = false;
+    private bool _showReserveModal = false;
     private int _selectedMemberId = 0;
     private DateTime _dueDate = DateTime.Now.AddDays(14);
 
@@ -261,13 +325,73 @@ else
         _showLoanModal = false;
     }
 
+    private async Task ShowReserveModal()
+    {
+        var allMembers = await MemberRepository.GetAllAsync();
+
+        // Filtrera bort medlemmen som för tillfället har lånat boken
+        var activeLoan = _loans.FirstOrDefault(l => !l.IsReturned);
+        if (activeLoan != null)
+        {
+            _members = allMembers.Where(m => m.Id != activeLoan.MemberId);
+        }
+        else
+        {
+            _members = allMembers;
+        }
+
+        _selectedMemberId = 0;
+        _showReserveModal = true;
+    }
+
+    private void CloseReserveModal()
+    {
+        _showReserveModal = false;
+    }
+
+    private async Task ReserveBook()
+    {
+        try
+        {
+            var member = await MemberRepository.GetByIdAsync(_selectedMemberId);
+            if (member == null)
+            {
+                _message = "Medlem hittades inte.";
+                _isError = true;
+                return;
+            }
+
+            _book!.IsReserved = true;
+            _book.ReservedByMemberId = _selectedMemberId;
+            await BookRepository.UpdateAsync(_book);
+
+            _message = $"Boken har reserverats av {member.Name}!";
+            _isError = false;
+            CloseReserveModal();
+            await LoadBook();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
+            _isError = true;
+        }
+    }
+
     private async Task CreateLoan()
     {
         try
         {
+            // Kontrollera om boken är reserverad av annan medlem
+            if (_book!.IsReserved && _book.ReservedByMemberId != _selectedMemberId)
+            {
+                _message = $"Boken är reserverad av {_book.ReservedBy?.Name} och kan inte lånas ut till annan medlem.";
+                _isError = true;
+                return;
+            }
+
             var loan = new LoanEntity
             {
-                BookId = _book!.Id,
+                BookId = _book.Id,
                 MemberId = _selectedMemberId,
                 LoanDate = DateTime.Now,
                 DueDate = _dueDate
@@ -276,6 +400,14 @@ else
             await LoanRepository.AddAsync(loan);
 
             _book.IsAvailable = false;
+
+            // Rensa reservation om den som reserverat lånar boken
+            if (_book.IsReserved && _book.ReservedByMemberId == _selectedMemberId)
+            {
+                _book.IsReserved = false;
+                _book.ReservedByMemberId = null;
+            }
+
             await BookRepository.UpdateAsync(_book);
 
             _message = "Lånet har skapats!";
@@ -305,7 +437,14 @@ else
             _book!.IsAvailable = true;
             await BookRepository.UpdateAsync(_book);
 
-            _message = "Boken har återlämnats!";
+            if (_book.IsReserved)
+            {
+                _message = $"Boken har återlämnats! OBS: Boken är reserverad av {_book.ReservedBy?.Name}.";
+            }
+            else
+            {
+                _message = "Boken har återlämnats!";
+            }
             _isError = false;
             await LoadBook();
         }
@@ -326,6 +465,62 @@ else
         catch (Exception ex)
         {
             _message = $"Kunde inte ta bort boken: {ex.Message}";
+            _isError = true;
+        }
+    }
+
+    private async Task LoanToReservedMember()
+    {
+        try
+        {
+            if (_book?.ReservedByMemberId == null)
+            {
+                _message = "Ingen reservation finns.";
+                _isError = true;
+                return;
+            }
+
+            var loan = new LoanEntity
+            {
+                BookId = _book.Id,
+                MemberId = _book.ReservedByMemberId.Value,
+                LoanDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(14)
+            };
+
+            await LoanRepository.AddAsync(loan);
+
+            _book.IsAvailable = false;
+            _book.IsReserved = false;
+            _book.ReservedByMemberId = null;
+            await BookRepository.UpdateAsync(_book);
+
+            _message = "Lånet har skapats till den reserverande medlemmen!";
+            _isError = false;
+            await LoadBook();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
+            _isError = true;
+        }
+    }
+
+    private async Task CancelReservation()
+    {
+        try
+        {
+            _book!.IsReserved = false;
+            _book.ReservedByMemberId = null;
+            await BookRepository.UpdateAsync(_book);
+
+            _message = "Reservationen har avbrutits.";
+            _isError = false;
+            await LoadBook();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
             _isError = true;
         }
     }

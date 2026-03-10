@@ -103,15 +103,19 @@ public class BookTests
     }
 
     [Fact]
-    public void MarkAsReserved_ShouldThrowException_WhenBookIsBorrowed()
+    public void MarkAsReserved_ShouldSucceed_WhenBookIsBorrowed()
     {
-        // Arrange
+        // Arrange - Nu kan man reservera utlånade böcker
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         book.MarkAsBorrowed();
 
-        // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => book.MarkAsReserved(member));
+        // Act
+        book.MarkAsReserved(member);
+
+        // Assert
+        Assert.True(book.IsReserved);
+        Assert.Equal(member, book.ReservedBy);
     }
 
     [Fact]
@@ -120,13 +124,14 @@ public class BookTests
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed(); // Boken måste vara utlånad för att reserveras
         book.MarkAsReserved(member);
 
         // Act
         var info = book.GetInfo();
 
         // Assert
-        Assert.Equal("\"Titel\" av Författare (ISBN: 978-91-0-012345-6) (2020) - Reserverad", info);
+        Assert.Equal("\"Titel\" av Författare (ISBN: 978-91-0-012345-6) (2020) - Utlånad (Reserverad)", info);
     }
 
     [Fact]
@@ -135,6 +140,7 @@ public class BookTests
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed(); // Boken måste vara utlånad för att reserveras
 
         // Act
         book.MarkAsReserved(member);
@@ -149,6 +155,7 @@ public class BookTests
     {
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
+        book.MarkAsBorrowed();
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => book.MarkAsReserved(null));
@@ -160,10 +167,23 @@ public class BookTests
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed();
         book.MarkAsReserved(member);
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => book.MarkAsReserved(member));
+    }
+
+    [Fact]
+    public void MarkAsReserved_ShouldThrowException_WhenBookIsAvailable()
+    {
+        // Arrange - boken är tillgänglig (kan lånas direkt)
+        var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
+        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+
+        // Act & Assert
+        var ex = Assert.Throws<InvalidOperationException>(() => book.MarkAsReserved(member));
+        Assert.Contains("tillgänglig", ex.Message);
     }
 
     [Fact]
@@ -172,6 +192,7 @@ public class BookTests
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        book.MarkAsBorrowed();
         book.MarkAsReserved(member);
 
         // Act

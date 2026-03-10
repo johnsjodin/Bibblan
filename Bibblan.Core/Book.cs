@@ -81,11 +81,11 @@ public partial class Book : ISearchable
 
     public void MarkAsReserved(Member member)
     {
-        // Reserverar boken för en viss medlem.
+        // Reserverar boken för en viss medlem (endast utlånade böcker kan reserveras).
         if (member == null)
             throw new ArgumentNullException(nameof(member));
-        if (!IsAvailable)
-            throw new InvalidOperationException("Boken är utlånad.");
+        if (IsAvailable)
+            throw new InvalidOperationException("Boken är tillgänglig och kan lånas direkt.");
         if (IsReserved)
             throw new InvalidOperationException("Boken är redan reserverad.");
 

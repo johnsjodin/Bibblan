@@ -297,17 +297,19 @@ public class LoanManagerTests
     [Fact]
     public void ReserveBook_ShouldMarkBookAsReserved()
     {
-        // Arrange
+        // Arrange - Boken måste vara utlånad för att kunna reserveras
         var loanManager = new LoanManager();
         var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
-        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var borrower = new Member("11111", "Kalle Karlsson", "kalle@testemail.se");
+        var reserver = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        loanManager.CreateLoan(book, borrower, DateTime.Now, DateTime.Now.AddDays(14));
 
         // Act
-        loanManager.ReserveBook(book, member);
+        loanManager.ReserveBook(book, reserver);
 
         // Assert
         Assert.True(book.IsReserved);
-        Assert.Equal(member, book.ReservedBy);
+        Assert.Equal(reserver, book.ReservedBy);
     }
 
     [Fact]
@@ -333,32 +335,37 @@ public class LoanManagerTests
     }
 
     [Fact]
-    public void ReserveBook_ShouldThrowException_WhenBookIsBorrowed()
+    public void ReserveBook_ShouldThrowException_WhenBookIsAvailable()
     {
-        // Arrange
+        // Arrange - Tillgängliga böcker kan lånas direkt, inte reserveras
         var loanManager = new LoanManager();
         var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        book.MarkAsBorrowed();
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => loanManager.ReserveBook(book, member));
+        var ex = Assert.Throws<InvalidOperationException>(() => loanManager.ReserveBook(book, member));
+        Assert.Contains("tillgänglig", ex.Message);
     }
 
     [Fact]
     public void CreateLoan_ShouldThrowException_WhenBookReservedByOtherMember()
     {
-        // Arrange
+        // Arrange - En bok som är reserverad ska inte kunna lånas ut till annan medlem
         var loanManager = new LoanManager();
         var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
-        var member1 = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        var member2 = new Member("67890", "Anna Andersson", "anna@testemail.se");
+        var borrower = new Member("11111", "Kalle Karlsson", "kalle@testemail.se");
+        var reserver = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var anotherPerson = new Member("67890", "Anna Andersson", "anna@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
-        loanManager.ReserveBook(book, member1);
 
-        // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => loanManager.CreateLoan(book, member2, loanDate, dueDate));
+        // Låna ut boken först, reservera den, sedan återlämna
+        loanManager.CreateLoan(book, borrower, loanDate, dueDate);
+        loanManager.ReserveBook(book, reserver);
+        loanManager.ReturnBook(loanManager.Loans.First(), DateTime.Now);
+
+        // Act & Assert - Anna kan inte låna boken som är reserverad av Johan
+        Assert.Throws<InvalidOperationException>(() => loanManager.CreateLoan(book, anotherPerson, loanDate, dueDate.AddDays(14)));
     }
 
     [Fact]
@@ -367,15 +374,20 @@ public class LoanManagerTests
         // Arrange
         var loanManager = new LoanManager();
         var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
-        var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
+        var borrower = new Member("11111", "Kalle Karlsson", "kalle@testemail.se");
+        var reserver = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
-        loanManager.ReserveBook(book, member);
 
-        // Act
-        loanManager.CreateLoan(book, member, loanDate, dueDate);
+        // Låna ut, reservera, återlämna
+        loanManager.CreateLoan(book, borrower, loanDate, dueDate);
+        loanManager.ReserveBook(book, reserver);
+        loanManager.ReturnBook(loanManager.Loans.First(), DateTime.Now);
 
-        // Assert
+        // Act - Nu lånar den som reserverade
+        loanManager.CreateLoan(book, reserver, loanDate, dueDate.AddDays(14));
+
+        // Assert - Reservationen ska rensas
         Assert.False(book.IsReserved);
         Assert.Null(book.ReservedBy);
     }

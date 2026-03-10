@@ -120,6 +120,13 @@ En fullständig webbapplikation som bygger vidare på Del 1 med moderna teknolog
 - Spåra försenade lån med markering
 - Filtrera efter aktiva, försenade eller alla lån
 
+### 📌 Reservationer
+- Reservera utlånade böcker för att få dem vid återlämning
+- Endast andra medlemmar kan reservera (inte den som lånar)
+- Avbryt reservation vid behov
+- Reserverande medlem har förtur vid utlåning
+- Skydd: kan inte låna ut till annan medlem om boken är reserverad
+
 ### 📊 Startsida med statistik
 - Totalt antal böcker i katalogen
 - Antal tillgängliga böcker
@@ -175,7 +182,7 @@ Bibblan/
 │   ├── wwwroot/               # Statiska filer
 │   └── Program.cs             # Applikationskonfiguration
 │
-└── Bibblan.Tests/             # Enhetstester (196 tester)
+└── Bibblan.Tests/             # Enhetstester (197 tester)
     ├── BookTests.cs
     ├── MemberTests.cs
     ├── LoanTests.cs
@@ -235,7 +242,7 @@ Bibblan/
 
 ## 📊 Testöversikt
 
-Projektet innehåller **196 tester** som täcker:
+Projektet innehåller **197 tester** som täcker:
 
 | Kategori | Antal | Beskrivning |
 |----------|-------|-------------|
@@ -256,7 +263,7 @@ dotnet test
 |------|-----|-------------|
 | Startsida | `/` | Statistik och snabbåtgärder |
 | Böcker | `/books` | Lista, sök och lägg till böcker |
-| Bokdetaljer | `/books/{id}` | Visa bok med lånehistorik, låna ut/returnera |
+| Bokdetaljer | `/books/{id}` | Visa bok med lånehistorik, låna ut/returnera/reservera |
 | Medlemmar | `/members` | Lista och registrera medlemmar |
 | Medlemsdetaljer | `/members/{id}` | Visa medlem med lånehistorik |
 | Utlåning | `/loans` | Hantera alla lån, skapa nya, återlämna |
