@@ -141,10 +141,10 @@ public class MemberTests
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(null!)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string searchTerm)
+    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string? searchTerm)
     {
         // Arrange
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");

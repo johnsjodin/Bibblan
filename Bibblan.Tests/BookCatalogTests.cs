@@ -78,10 +78,10 @@ public class BookCatalogTests
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(null!)]
     [InlineData("")]
     [InlineData("   ")]
-    public void RemoveBook_ShouldThrowException_WhenIsbnIsInvalid(string isbn)
+    public void RemoveBook_ShouldThrowException_WhenIsbnIsInvalid(string? isbn)
     {
         // Arrange
         var catalog = new BookCatalog();

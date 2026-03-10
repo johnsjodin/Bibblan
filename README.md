@@ -21,7 +21,8 @@ Den här versionen har utökats med:
 - Lägg till, ta bort och sök efter böcker
 - Spåra bokstatus (tillgänglig/utlånad/reserverad)
 - Sortera böcker efter titel, författare eller utgivningsår
-- Validering av ISBN, titel, författare och utgivningsår
+- Validering av ISBN (10-13 siffror), titel, författare och utgivningsår
+- Formaterad ISBN-visning med bindestreck
 - Detaljvy med lånehistorik
 
 ### 👥 Medlemshantering
@@ -32,6 +33,7 @@ Den här versionen har utökats med:
 
 ### 🔄 Lånehantering
 - Skapa nya lån med automatisk validering
+- Validering: lånedatum inte i framtiden, förfallodatum efter lånedatum
 - Returnera böcker med tidsstämplar
 - Spåra försenade lån med markering
 - Filtrera efter aktiva, försenade eller alla lån
@@ -73,24 +75,29 @@ Bibblan/
 │   │   ├── MemberRepository.cs
 │   │   ├── ILoanRepository.cs
 │   │   └── LoanRepository.cs
+│   ├── Validation/            # Custom Validation Attributes
+│   │   ├── IsbnHelper.cs      # ISBN-validering och formatering
+│   │   └── DateValidation.cs  # Datumvalidering
 │   └── LibraryContext.cs      # DbContext
 │
 ├── Bibblan.Web/               # Blazor Server-projekt
 │   ├── Components/
 │   │   ├── Pages/             # Sidor
 │   │   │   ├── Home.razor     # Startsida med statistik
-│   │   │   ├── Books.razor    # Boklista med sök/sortering
+│   │   │   ├── Books.razor    # Boklista med sök
 │   │   │   ├── BookDetails.razor
 │   │   │   ├── Members.razor  # Medlemslista
 │   │   │   ├── MemberDetails.razor
 │   │   │   └── Loans.razor    # Lånehantering
 │   │   ├── Layout/            # Layout-komponenter
 │   │   └── Shared/            # Återanvändbara komponenter
-│   │       └── BookCard.razor
+│   │       ├── BookCard.razor
+│   │       ├── MemberCard.razor
+│   │       └── LoanCard.razor
 │   ├── wwwroot/               # Statiska filer
 │   └── Program.cs             # Applikationskonfiguration
 │
-└── Bibblan.Tests/             # Enhetstester
+└── Bibblan.Tests/             # Enhetstester (196 tester)
     ├── BookTests.cs
     ├── MemberTests.cs
     ├── LoanTests.cs
@@ -98,10 +105,13 @@ Bibblan/
     ├── MemberRegistryTests.cs
     ├── LoanManagerTests.cs
     ├── LibraryTests.cs
-    ├── BookRepositoryTests.cs    # Repository-tester (Del 2)
-    ├── LoanRepositoryTests.cs    # Repository-tester (Del 2)
-    ├── LibraryIntegrationTests.cs # Integration med EF (Del 2)
-    └── BookCardTests.cs          # bUnit Blazor-tester (Del 2)
+    ├── BookRepositoryTests.cs    # Repository-tester
+    ├── LoanRepositoryTests.cs    # Repository-tester
+    ├── LibraryIntegrationTests.cs # Integration med EF
+    ├── BookCardTests.cs          # bUnit Blazor-tester
+    ├── IsbnHelperTests.cs        # ISBN-valideringstester
+    ├── DateValidationTests.cs    # Datumvalideringstester
+    └── TestData.cs               # Testdata och konstanter
 ```
 
 ## 🗄️ Databasmodell
@@ -131,13 +141,19 @@ Bibblan/
 ## 🛠️ Teknisk Stack
 
 - **.NET 10** - Modern .NET-plattform
-- **C# 14** - Senaste C#-funktioner
-- **Blazor Server** - Interaktivt webbgränssnitt
+- **C# 14** - Senaste C#-funktioner (GeneratedRegex, etc.)
+- **Blazor Server** - Interaktivt webbgränssnitt med SignalR
 - **Entity Framework Core 10** - ORM för databashantering
 - **SQL Server LocalDB** - Lokal utvecklingsdatabas
-- **Bootstrap 5** - Responsiv design
-- **xUnit** - Testramverk
-- **bUnit** - Blazor-komponenttester
+- **Bootstrap 5** - Responsiv design (mobile-first)
+- **xUnit v3** - Testramverk
+- **bUnit 2.0** - Blazor-komponenttester
+
+### Custom Validation Attributes
+- `[Isbn]` - Validerar ISBN-10 eller ISBN-13
+- `[PublishedYear]` - Validerar att år inte är i framtiden
+- `[NotInFuture]` - Validerar att datum inte är i framtiden
+- `[MustBeAfter]` - Validerar att datum är efter ett annat fält
 
 ## 🚀 Kom igång
 
@@ -178,13 +194,20 @@ dotnet run --project Bibblan.Core
 
 ## 📊 Testöversikt
 
-Projektet innehåller **155 tester** varav:
-- **Del 1**: ~140 tester för kärnlogik
-- **Del 2**: 26 nya tester
-  - 8 BookRepository-tester
-  - 4 LoanRepository-tester
-  - 3 LibraryIntegration-tester
-  - 11 bUnit BookCard-tester
+Projektet innehåller **196 tester** som täcker:
+
+| Kategori | Antal | Beskrivning |
+|----------|-------|-------------|
+| Core-tester | ~140 | Kärnlogik från Del 1 |
+| Repository-tester | 12 | EF InMemory-databas |
+| Integration-tester | 3 | Affärslogik med EF |
+| bUnit-tester | 12 | Blazor-komponenter |
+| Validerings-tester | 29 | ISBN och datumvalidering |
+
+Kör alla tester:
+```bash
+dotnet test
+```
 
 ## 🌐 Webbgränssnitt (Blazor-sidor)
 
@@ -244,10 +267,22 @@ dotnet test --logger "console;verbosity=detailed"
 - Alla collections exponeras som `IReadOnlyList<T>` för att förhindra extern modifiering
 - Privata fält med publika readonly properties
 
+### Repository Pattern
+- Separerar dataåtkomst från affärslogik
+- Möjliggör enkel testning med InMemory-databas
+- Interface-baserad design för dependency injection
+
 ### Validering
-- Alla input valideras med beskrivande felmeddelanden
+- Custom validation attributes för återanvändbar validering
+- Server-side validering via DataAnnotations
+- Client-side validering i Blazor-formulär
 - Argument null-kontroller
 - Affärsregelvalidering (t.ex. böcker kan inte lånas ut två gånger)
+
+### Responsiv Design
+- Mobile-first approach med Bootstrap 5
+- Kort-layout för böcker, medlemmar och lån
+- Anpassad för alla skärmstorlekar
 
 ### Separation of Concerns
 - Tydlig separation mellan entiteter (Book, Member, Loan) och hanteringsklasser (BookCatalog, MemberRegistry, LoanManager)

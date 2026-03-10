@@ -225,10 +225,10 @@ public class BookTests
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(null!)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string searchTerm)
+    public void Matches_ShouldReturnFalse_WhenSearchTermIsInvalid(string? searchTerm)
     {
         // Arrange
         var book = new Book(ValidIsbn13, "Titel", "Författare", 2020);

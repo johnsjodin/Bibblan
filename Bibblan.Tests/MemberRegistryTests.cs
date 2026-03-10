@@ -79,10 +79,10 @@ public class MemberRegistryTests
     }
 
     [Theory]
-    [InlineData(null)]
+    [InlineData(null!)]
     [InlineData("")]
     [InlineData("   ")]
-    public void GetMemberById_ShouldThrowException_WhenMemberIdIsInvalid(string memberId)
+    public void GetMemberById_ShouldThrowException_WhenMemberIdIsInvalid(string? memberId)
     {
         // Arrange
         var registry = new MemberRegistry();

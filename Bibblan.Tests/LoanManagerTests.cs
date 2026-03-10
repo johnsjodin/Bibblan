@@ -135,7 +135,7 @@ public class LoanManagerTests
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => 
-            loanManager.ReturnBook(null, returnDate));
+            loanManager.ReturnBook(null!, returnDate));
     }
 
     [Fact]
@@ -318,7 +318,7 @@ public class LoanManagerTests
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(null, member));
+        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(null!, member));
     }
 
     [Fact]
@@ -329,7 +329,7 @@ public class LoanManagerTests
         var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(book, null));
+        Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(book, null!));
     }
 
     [Fact]

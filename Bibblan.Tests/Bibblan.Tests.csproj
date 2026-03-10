@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <!-- Tysta varningar för null-tester och CancellationToken -->
+    <NoWarn>CS8625;CS8604;CS8602;xUnit1051;xUnit1012;CS0618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +21,7 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
-    <PackageReference Include="bunit" Version="2.0.54-preview" />
+    <PackageReference Include="bunit" Version="2.0.55-preview" />
   </ItemGroup>
 
   <ItemGroup>

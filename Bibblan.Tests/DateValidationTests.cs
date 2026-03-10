@@ -217,4 +217,73 @@ public class DateValidationTests
     }
 
     #endregion
+
+    #region MustBeAfterAttribute Tests
+
+    // Hjälpklass för att testa MustBeAfterAttribute
+    private class TestLoanModel
+    {
+        public DateTime LoanDate { get; set; }
+        public DateTime DueDate { get; set; }
+    }
+
+    [Fact]
+    public void MustBeAfter_ShouldAcceptDueDateAfterLoanDate()
+    {
+        // Arrange
+        var model = new TestLoanModel
+        {
+            LoanDate = DateTime.Now,
+            DueDate = DateTime.Now.AddDays(14)
+        };
+        var attribute = new MustBeAfterAttribute(nameof(TestLoanModel.LoanDate));
+        var context = new ValidationContext(model) { MemberName = nameof(TestLoanModel.DueDate) };
+
+        // Act
+        var result = attribute.GetValidationResult(model.DueDate, context);
+
+        // Assert
+        Assert.Equal(ValidationResult.Success, result);
+    }
+
+    [Fact]
+    public void MustBeAfter_ShouldRejectDueDateBeforeLoanDate()
+    {
+        // Arrange
+        var model = new TestLoanModel
+        {
+            LoanDate = DateTime.Now,
+            DueDate = DateTime.Now.AddDays(-1)
+        };
+        var attribute = new MustBeAfterAttribute(nameof(TestLoanModel.LoanDate));
+        var context = new ValidationContext(model) { MemberName = nameof(TestLoanModel.DueDate) };
+
+        // Act
+        var result = attribute.GetValidationResult(model.DueDate, context);
+
+        // Assert
+        Assert.NotEqual(ValidationResult.Success, result);
+    }
+
+    [Fact]
+    public void MustBeAfter_ShouldRejectSameDate()
+    {
+        // Arrange
+        var sameDate = DateTime.Now;
+        var model = new TestLoanModel
+        {
+            LoanDate = sameDate,
+            DueDate = sameDate
+        };
+        var attribute = new MustBeAfterAttribute(nameof(TestLoanModel.LoanDate));
+        var context = new ValidationContext(model) { MemberName = nameof(TestLoanModel.DueDate) };
+
+        // Act
+        var result = attribute.GetValidationResult(model.DueDate, context);
+
+        // Assert
+        Assert.NotEqual(ValidationResult.Success, result);
+    }
+
+    #endregion
 }

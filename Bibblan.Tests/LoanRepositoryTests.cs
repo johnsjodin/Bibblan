@@ -3,6 +3,8 @@ using Bibblan.Data.Entities;
 using Bibblan.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
+#pragma warning disable xUnit1051 // CancellationToken i testmetoder är inte kritiskt
+
 namespace Bibblan.Tests;
 
 /// <summary>
