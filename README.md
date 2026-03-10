@@ -1,5 +1,6 @@
 <center>
-<img width="746" height="305" alt="Testresultat" src="https://github.com/user-attachments/assets/7a5eb4c3-7491-4268-9e45-a3933c442af3" />
+<img width="747" height="329" alt="Testresultat" src="https://github.com/user-attachments/assets/fc591ebf-d855-4ea8-b7d4-7f49e652ee77" />
+
 
 <img width="1273" height="473" alt="Blazor-UI" src="https://github.com/user-attachments/assets/85fd6010-6903-4267-ae8e-9cda6b8d594b" />
 </center>
