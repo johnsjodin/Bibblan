@@ -1,7 +1,7 @@
-
-<img width="578" height="227" alt="Testresultat" src="https://github.com/user-attachments/assets/61b7a73b-8453-46b1-b530-6ebf82b7b0ed" />
-
-
+<center>
+<img width="820" height="310" alt="Testresultat" src="https://github.com/user-attachments/assets/cfc8f3af-c107-4f72-be95-fa9bf01ffe31" />
+<img width="1273" height="473" alt="Blazor-UI" src="https://github.com/user-attachments/assets/85fd6010-6903-4267-ae8e-9cda6b8d594b" />
+</center>
 
 # 📚 Bibblan - Bibliotekshanteringssystem
 
