@@ -5,29 +5,111 @@
 
 # 📚 Bibblan - Bibliotekshanteringssystem
 
-Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Bibblan innehåller ett webbgränssnitt i Blazor Server med Entity Framework Core för databashantering.
+Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Projektet består av två delar: en konsolapplikation (Del 1) och en fullständig webbapplikation med Blazor och Entity Framework (Del 2).
 
-## 🎯 Version 2.0 - Nu med Blazor och Entity Framework!
+---
 
-Den här versionen har utökats med:
-- **Blazor Server** - Modernt webbgränssnitt med responsiv design
-- **Entity Framework Core** - Databashantering med SQL Server LocalDB
-- **Repository Pattern** - Separerad dataåtkomst för bättre testbarhet
-- **bUnit-tester** - Enhetstester för Blazor-komponenter
+# 📘 Del 1 - Konsolapplikation
 
-## ✨ Funktioner
+Den ursprungliga konsolapplikationen med kärnlogik för bibliotekshantering.
+
+## ✨ Funktioner (Del 1)
 
 ### 📖 Bokhantering
 - Lägg till, ta bort och sök efter böcker
 - Spåra bokstatus (tillgänglig/utlånad/reserverad)
-- Sortera böcker efter titel, författare eller utgivningsår
+- Sortera böcker efter titel eller utgivningsår
+- Validering av ISBN, titel, författare och utgivningsår
+
+### 👥 Medlemshantering
+- Registrera och hantera biblioteksmedlemmar
+- Spåra medlemmars lånehistorik
+- Sök medlemmar baserat på namn, email eller medlems-ID
+
+### 🔄 Lånehantering
+- Skapa och hantera lån
+- Returnera böcker med förseningsavgift
+- Reservera böcker per medlem
+
+## 🚀 Kör konsolappen
+
+```bash
+dotnet run --project Bibblan.Core
+```
+
+### Menyval
+
+```text
+--- Bibliotekssystem ---
+1. Lägg till bok
+2. Lista böcker
+3. Lägg till medlem
+4. Låna bok
+5. Återlämna bok
+6. Sök böcker
+7. Sortera böcker (titel)
+8. Sortera böcker (år)
+9. Statistik
+10. Reservera bok
+11. Sätt förseningsavgift
+0. Avsluta
+```
+
+## 🏗️ Projektstruktur (Del 1)
+
+```
+Bibblan.Core/
+├── Book.cs                # Bokentitet med sökfunktionalitet
+├── Member.cs              # Medlemsentitet
+├── Loan.cs                # Låneentitet
+├── BookCatalog.cs         # Bokkatalogshantering
+├── MemberRegistry.cs      # Medlemsregister
+├── LoanManager.cs         # Lånehantering
+├── Library.cs             # Huvudfacade för systemet
+├── ISearchable.cs         # Sökinterface
+└── Program.cs             # Konsolgränssnitt
+```
+
+## 🔒 Designprinciper (Del 1)
+
+### Inkapsling
+- Alla collections exponeras som `IReadOnlyList<T>` för att förhindra extern modifiering
+- Privata fält med publika readonly properties
+
+### Separation of Concerns
+- Tydlig separation mellan entiteter (Book, Member, Loan) och hanteringsklasser
+- Library-klassen fungerar som facade för enkel användning
+
+### Validering
+- Alla input valideras med beskrivande felmeddelanden
+- Argument null-kontroller
+- Affärsregelvalidering (t.ex. böcker kan inte lånas ut två gånger)
+
+---
+
+# 📗 Del 2 - Webbapplikation (Blazor + Entity Framework)
+
+En fullständig webbapplikation som bygger vidare på Del 1 med moderna teknologier.
+
+## 🎯 Nya funktioner i Del 2
+
+- **Blazor Server** - Modernt webbgränssnitt med responsiv design
+- **Entity Framework Core** - Databashantering med SQL Server LocalDB
+- **Repository Pattern** - Separerad dataåtkomst för bättre testbarhet
+- **Custom Validation Attributes** - Återanvändbar validering
+- **bUnit-tester** - Enhetstester för Blazor-komponenter
+- **Responsiv design** - Mobile-first med Bootstrap 5
+
+## ✨ Funktioner (Del 2)
+
+### 📖 Bokhantering
+- Lägg till, ta bort och sök efter böcker
 - Validering av ISBN (10-13 siffror), titel, författare och utgivningsår
 - Formaterad ISBN-visning med bindestreck
 - Detaljvy med lånehistorik
 
 ### 👥 Medlemshantering
 - Registrera och hantera biblioteksmedlemmar
-- Spåra medlemmars lånehistorik
 - Sök medlemmar baserat på namn, email eller medlems-ID
 - Visa detaljerad medlemsinformation med aktiva lån
 
@@ -38,17 +120,13 @@ Den här versionen har utökats med:
 - Spåra försenade lån med markering
 - Filtrera efter aktiva, försenade eller alla lån
 
-### 🗓️ Reservationer
-- Reservera böcker per medlem
-- Blockerar utlån om boken är reserverad av annan medlem
-
 ### 📊 Startsida med statistik
 - Totalt antal böcker i katalogen
 - Antal tillgängliga böcker
 - Antal medlemmar
 - Aktiva och försenade lån
 
-## 🏗️ Projektstruktur
+## 🏗️ Projektstruktur (Del 2)
 
 ```
 Bibblan/
@@ -155,43 +233,6 @@ Bibblan/
 - `[NotInFuture]` - Validerar att datum inte är i framtiden
 - `[MustBeAfter]` - Validerar att datum är efter ett annat fält
 
-## 🚀 Kom igång
-
-### Förutsättningar
-- .NET 10 SDK eller senare
-- Visual Studio 2025 (eller annan C#-kompatibel IDE)
-- SQL Server LocalDB (ingår i Visual Studio)
-
-### Installation
-
-1. Klona repositoryt:
-```bash
-git clone https://github.com/johnsjodin/Bibblan.git
-cd Bibblan
-```
-
-2. Bygg projektet:
-```bash
-dotnet build
-```
-
-3. Kör Blazor-webbappen:
-```bash
-dotnet run --project Bibblan.Web
-```
-
-4. Öppna webbläsaren och gå till: `https://localhost:5001` eller `http://localhost:5000`
-
-### Kör testerna
-```bash
-dotnet test
-```
-
-### Kör konsolappen (Del 1)
-```bash
-dotnet run --project Bibblan.Core
-```
-
 ## 📊 Testöversikt
 
 Projektet innehåller **196 tester** som täcker:
@@ -214,98 +255,70 @@ dotnet test
 | Sida | URL | Beskrivning |
 |------|-----|-------------|
 | Startsida | `/` | Statistik och snabbåtgärder |
-| Böcker | `/books` | Lista, sök, sortera och lägg till böcker |
+| Böcker | `/books` | Lista, sök och lägg till böcker |
 | Bokdetaljer | `/books/{id}` | Visa bok med lånehistorik, låna ut/returnera |
 | Medlemmar | `/members` | Lista och registrera medlemmar |
 | Medlemsdetaljer | `/members/{id}` | Visa medlem med lånehistorik |
 | Utlåning | `/loans` | Hantera alla lån, skapa nya, återlämna |
 
-## 📜 Licens
-
-MIT License
-
-## 💡 Användningsexempel
-
-Kör programmet och följ menyvalen i konsolen:
-
-```text
---- Bibliotekssystem ---
-1. Lägg till bok
-2. Lista böcker
-3. Lägg till medlem
-4. Låna bok
-5. Återlämna bok
-6. Sök böcker
-7. Sortera böcker (titel)
-8. Sortera böcker (år)
-9. Statistik
-10. Reservera bok
-11. Sätt förseningsavgift
-0. Avsluta
-```
-
-Exempel: välj menyval `1` för att lägga till en bok och följ inmatningsstegen.
-
-## 🧪 Testning
-
-Projektet har enhetstester som täcker:
-
-- ✅ Konstruktorvalidering
-- ✅ Affärslogik
-- ✅ Edge cases och felhantering
-- ✅ Datavalidering
-- ✅ Integrationstester
-
-Kör alla tester:
-```bash
-dotnet test --logger "console;verbosity=detailed"
-```
-
-## 🔒 Designprinciper
-
-### Inkapsling
-- Alla collections exponeras som `IReadOnlyList<T>` för att förhindra extern modifiering
-- Privata fält med publika readonly properties
+## 🔒 Designprinciper (Del 2)
 
 ### Repository Pattern
 - Separerar dataåtkomst från affärslogik
 - Möjliggör enkel testning med InMemory-databas
 - Interface-baserad design för dependency injection
 
-### Validering
-- Custom validation attributes för återanvändbar validering
-- Server-side validering via DataAnnotations
-- Client-side validering i Blazor-formulär
-- Argument null-kontroller
-- Affärsregelvalidering (t.ex. böcker kan inte lånas ut två gånger)
-
 ### Responsiv Design
 - Mobile-first approach med Bootstrap 5
 - Kort-layout för böcker, medlemmar och lån
 - Anpassad för alla skärmstorlekar
-
-### Separation of Concerns
-- Tydlig separation mellan entiteter (Book, Member, Loan) och hanteringsklasser (BookCatalog, MemberRegistry, LoanManager)
-- Library-klassen fungerar som facade för enkel användning
 
 ### Testbarhet
 - Internal members exponeras till test-projektet via `InternalsVisibleTo`
 - Dependency injection-vänlig design
 - Alla metoder är testbara
 
-## 📝 Licens
+---
 
-Detta projekt är skapat för utbildningssyfte.
+# 🚀 Kom igång
 
-## 👨‍💻 Författare
+### Förutsättningar
+- .NET 10 SDK eller senare
+- Visual Studio 2025 (eller annan C#-kompatibel IDE)
+- SQL Server LocalDB (ingår i Visual Studio) - endast för Del 2
 
-**John Sjödin**
-- GitHub: [@johnsjodin](https://github.com/johnsjodin)
+### Installation
 
-## 🤝 Bidrag
+```bash
+# Klona repositoryt
+git clone https://github.com/johnsjodin/Bibblan.git
+cd Bibblan
 
-Contributions, issues och feature requests är välkomna!
+# Bygg projektet
+dotnet build
+
+# Kör testerna
+dotnet test
+
+# Kör Del 1 (konsolappen)
+dotnet run --project Bibblan.Core
+
+# Kör Del 2 (webbappen)
+dotnet run --project Bibblan.Web
+```
+
+Öppna webbläsaren och gå till: `https://localhost:5001`
 
 ---
 
-*Byggt med ❤️ och C#*
+## 📝 Licens
+
+Detta projekt är skapat för utbildningssyfte (MIT License).
+
+## 👨‍💻 Författare
+
+**John Sjödin** - [@johnsjodin](https://github.com/johnsjodin)
+
+---
+
+*Byggt med ☕ och C#*
