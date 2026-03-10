@@ -14,16 +14,10 @@ public partial class IsbnAttribute : ValidationAttribute
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        if (value is not string isbn)
+        if (value is not string isbn || string.IsNullOrWhiteSpace(isbn))
             return new ValidationResult("ISBN måste anges.");
 
-        // Ta bort alla icke-siffror för validering
-        var digitsOnly = IsbnHelper.GetDigitsOnly(isbn);
-
-        if (digitsOnly.Length < 10 || digitsOnly.Length > 13)
-            return new ValidationResult("ISBN måste vara mellan 10 och 13 siffror.");
-
-        if (digitsOnly.Length != 10 && digitsOnly.Length != 13)
+        if (!IsbnHelper.IsValid(isbn))
             return new ValidationResult("ISBN måste vara exakt 10 eller 13 siffror.");
 
         return ValidationResult.Success;

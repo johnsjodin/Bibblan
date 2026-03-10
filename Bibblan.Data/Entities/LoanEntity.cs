@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Bibblan.Data.Validation;
 
 namespace Bibblan.Data.Entities;
 
@@ -12,7 +13,9 @@ public class LoanEntity
     public int BookId { get; set; }
     public int MemberId { get; set; }
 
+    [NotInFuture(ErrorMessage = "Lånedatum kan inte vara i framtiden.")]
     public DateTime LoanDate { get; set; }
+
     public DateTime DueDate { get; set; }
     public DateTime? ReturnDate { get; set; }
 

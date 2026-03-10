@@ -194,7 +194,9 @@ else
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Förfallodatum</label>
-                            <input type="date" class="form-control" @bind="_dueDate" />
+                            <input type="date" class="form-control" @bind="_dueDate" 
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <small class="text-muted">Lånedatum sätts automatiskt till idag</small>
                         </div>
                     </div>
                     <div class="modal-footer">

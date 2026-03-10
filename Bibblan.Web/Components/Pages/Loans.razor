@@ -192,13 +192,16 @@ else
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Lånedatum</label>
-                                <input type="date" class="form-control" @bind="_loanDate" />
+                                <input type="date" class="form-control" @bind="_loanDate" 
+                                       max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <small class="text-muted">Kan inte vara i framtiden</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Förfallodatum</label>
-                                <input type="date" class="form-control" @bind="_dueDate" />
+                                <input type="date" class="form-control" @bind="_dueDate" 
+                                       min="@_loanDate.ToString("yyyy-MM-dd")" />
                             </div>
                         </div>
                     </div>
@@ -300,8 +303,8 @@ else
         _allMembers = await MemberRepository.GetAllAsync();
         _selectedBookId = 0;
         _selectedMemberId = 0;
-        _loanDate = DateTime.Now;
-        _dueDate = DateTime.Now.AddDays(14);
+        _loanDate = DateTime.Now.Date;  // Dagens datum
+        _dueDate = DateTime.Now.Date.AddDays(14);
         _modalError = string.Empty;
         _showNewLoanModal = true;
     }
@@ -315,6 +318,13 @@ else
     {
         try
         {
+            // Validera att lånedatum inte är i framtiden
+            if (_loanDate.Date > DateTime.Now.Date)
+            {
+                _modalError = "Lånedatum kan inte vara i framtiden.";
+                return;
+            }
+
             if (_loanDate > _dueDate)
             {
                 _modalError = "Lånedatum måste vara före förfallodatum.";

@@ -30,7 +30,7 @@ public class BookEntity
     [MinLength(1, ErrorMessage = "Författare får inte vara tom.")]
     public string Author { get; set; } = string.Empty;
 
-    [Range(1450, 2100, ErrorMessage = "Utgivningsår måste vara mellan 1450 och 2100.")]
+    [PublishedYear(1450, ErrorMessage = "Utgivningsår måste vara mellan 1450 och innevarande år.")]
     public int PublishedYear { get; set; }
 
     public bool IsAvailable { get; set; } = true;

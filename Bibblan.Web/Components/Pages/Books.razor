@@ -148,8 +148,10 @@ else
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Utgivningsår</label>
-                            <InputNumber @bind-Value="_newBook.PublishedYear" class="form-control" />
+                            <InputNumber @bind-Value="_newBook.PublishedYear" class="form-control" 
+                                         max="@DateTime.Now.Year" min="1450" />
                             <ValidationMessage For="@(() => _newBook.PublishedYear)" />
+                            <small class="text-muted">Max: @DateTime.Now.Year</small>
                         </div>
                     </div>
                     <div class="modal-footer">
