@@ -252,16 +252,16 @@ public class BookCardTests : Bunit.TestContext
     }
 
     [Fact]
-    public void BookCard_ShouldDisplayISBN()
+    public void BookCard_ShouldDisplayFormattedISBN()
     {
-        // Arrange
+        // Arrange - ISBN utan bindestreck
         var book = new BookEntity
         {
             Id = 1,
             Title = "Bok",
             Author = "Författare",
             PublishedYear = 2020,
-            ISBN = "978-91-0-012345-6",
+            ISBN = "9789100123456",  // 13 siffror utan bindestreck
             IsAvailable = true
         };
 
@@ -269,8 +269,31 @@ public class BookCardTests : Bunit.TestContext
         var cut = Render<BookCard>(parameters =>
             parameters.Add(p => p.Book, book));
 
-        // Assert
+        // Assert - Ska visa formaterat ISBN med bindestreck
         var codeElement = cut.Find("code");
         Assert.Contains("978-91-0-012345-6", codeElement.TextContent);
+    }
+
+    [Fact]
+    public void BookCard_ShouldDisplayFormattedISBN10()
+    {
+        // Arrange - ISBN-10 utan bindestreck
+        var book = new BookEntity
+        {
+            Id = 1,
+            Title = "Bok",
+            Author = "Författare",
+            PublishedYear = 2020,
+            ISBN = "9100123456",  // 10 siffror utan bindestreck
+            IsAvailable = true
+        };
+
+        // Act
+        var cut = Render<BookCard>(parameters =>
+            parameters.Add(p => p.Book, book));
+
+        // Assert - Ska visa formaterat ISBN-10 med bindestreck
+        var codeElement = cut.Find("code");
+        Assert.Contains("91-0-012345-6", codeElement.TextContent);
     }
 }

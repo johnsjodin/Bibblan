@@ -1,4 +1,4 @@
-ï»¿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class LibraryTests
@@ -62,9 +62,9 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
-        var book3 = new Book("789", "Hobbit", "J.R.R. Tolkien", 1937);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book3 = new Book(TestData.Isbn13_3, "Hobbit", "J.R.R. Tolkien", 1937);
         bookCatalog.AddBook(book1);
         bookCatalog.AddBook(book2);
         bookCatalog.AddBook(book3);
@@ -87,7 +87,7 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         bookCatalog.AddBook(book);
 
         // Act
@@ -97,7 +97,7 @@ public class LibraryTests
         Assert.Empty(results);
     }
 
-    // Tester fÃ¶r statistikmetoderna
+    // Tester för statistikmetoderna
 
     [Fact]
     public void GetTotalBooks_ShouldReturnZero_WhenCatalogIsEmpty()
@@ -124,9 +124,9 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
-        var book3 = new Book("789", "Hobbit", "J.R.R. Tolkien", 1937);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book3 = new Book(TestData.Isbn13_3, "Hobbit", "J.R.R. Tolkien", 1937);
         bookCatalog.AddBook(book1);
         bookCatalog.AddBook(book2);
         bookCatalog.AddBook(book3);
@@ -163,8 +163,8 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
 
         var loanDate = DateTime.Now.AddDays(-5);
@@ -188,8 +188,8 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
 
         var loanDate = DateTime.Now.AddDays(-5);
@@ -231,9 +231,9 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
-        var book3 = new Book("789", "Hobbit", "J.R.R. Tolkien", 1937);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book3 = new Book(TestData.Isbn13_3, "Hobbit", "J.R.R. Tolkien", 1937);
 
         var member1 = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var member2 = new Member("67890", "Anna Andersson", "anna@testemail.se");
@@ -249,7 +249,7 @@ public class LibraryTests
         var mostActive = library.GetMostActiveBorrower();
 
         // Assert
-        Assert.Equal(member1, mostActive); // member1 har 2 lÃ¥n medan member2 har 1 lÃ¥n
+        Assert.Equal(member1, mostActive); // member1 har 2 lån medan member2 har 1 lån
     }
 
     [Fact]
@@ -261,9 +261,9 @@ public class LibraryTests
         var loanManager = new LoanManager();
         var library = new Library(bookCatalog, memberRegistry, loanManager);
 
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
-        var book3 = new Book("789", "Hobbit", "J.R.R. Tolkien", 1937);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book3 = new Book(TestData.Isbn13_3, "Hobbit", "J.R.R. Tolkien", 1937);
 
         var member1 = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var member2 = new Member("67890", "Anna Andersson", "anna@testemail.se");
@@ -275,7 +275,7 @@ public class LibraryTests
         var loan2 = loanManager.CreateLoan(book2, member1, loanDate, dueDate);
         loanManager.CreateLoan(book3, member2, loanDate, dueDate);
 
-        // LÃ¤mna tillbaka bÃ¥da lÃ¥n fÃ¶r member1 sÃ¥ att member2 blir den mest aktiva lÃ¥ntagaren
+        // Lämna tillbaka båda lån för member1 så att member2 blir den mest aktiva låntagaren
         loanManager.ReturnBook(loan1, DateTime.Now);
         loanManager.ReturnBook(loan2, DateTime.Now);
 
@@ -283,6 +283,6 @@ public class LibraryTests
         var mostActive = library.GetMostActiveBorrower();
 
         // Assert
-        Assert.Equal(member2, mostActive); // member2 Ã¤r nu den mest aktiva lÃ¥ntagaren
+        Assert.Equal(member2, mostActive); // member2 är nu den mest aktiva låntagaren
     }
 }

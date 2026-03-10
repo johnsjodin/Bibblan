@@ -1,4 +1,4 @@
-﻿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class MemberRegistryTests

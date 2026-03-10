@@ -1,4 +1,4 @@
-ï»¿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class LoanTests
@@ -7,10 +7,10 @@ public class LoanTests
     public void IsOverdue_ShouldReturnTrue_WhenLoanIsOverdue()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-10);
-        var dueDate = loanDate.AddDays(7); // Ã…terlÃ¤mningsdatum var fÃ¶r 3 dagar sedan
+        var dueDate = loanDate.AddDays(7); // Återlämningsdatum var för 3 dagar sedan
         var loan = new Loan(book, member, loanDate, dueDate);
 
         // Act
@@ -24,10 +24,10 @@ public class LoanTests
     public void IsOverdue_ShouldReturnFalse_WhenLoanIsNotOverdue()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-3);
-        var dueDate = loanDate.AddDays(7); // Ã…terlÃ¤mningsdatum Ã¤r om 4 dagar
+        var dueDate = loanDate.AddDays(7); // Återlämningsdatum är om 4 dagar
         var loan = new Loan(book, member, loanDate, dueDate);
 
         // Act
@@ -41,7 +41,7 @@ public class LoanTests
     public void IsReturned_ShouldReturnFalse_WhenLoanIsNotReturned()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-3);
         var dueDate = loanDate.AddDays(7);
@@ -58,7 +58,7 @@ public class LoanTests
     public void IsReturned_ShouldReturnTrue_WhenLoanIsReturned()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-10);
         var dueDate = loanDate.AddDays(7);
@@ -76,7 +76,7 @@ public class LoanTests
     public void Constructor_ShouldSetPropertiesCorrectly()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-5);
         var dueDate = loanDate.AddDays(14);
@@ -108,7 +108,7 @@ public class LoanTests
     public void Constructor_ShouldThrowException_WhenMemberIsNull()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
 
@@ -120,10 +120,10 @@ public class LoanTests
     public void Constructor_ShouldThrowException_WhenLoanDateIsAfterDueDate()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(10);
-        var dueDate = DateTime.Now; // Ã…terlÃ¤mningsdatum Ã¤r fÃ¶re lÃ¥nedatumet
+        var dueDate = DateTime.Now; // Återlämningsdatum är före lånedatumet
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => new Loan(book, member, loanDate, dueDate));
@@ -133,7 +133,7 @@ public class LoanTests
     public void MarkAsReturned_ShouldSetReturnDate()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-5);
         var dueDate = loanDate.AddDays(14);
@@ -152,7 +152,7 @@ public class LoanTests
     public void MarkAsReturned_ShouldThrowException_WhenAlreadyReturned()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-5);
         var dueDate = loanDate.AddDays(14);
@@ -167,10 +167,10 @@ public class LoanTests
     public void IsOverdue_ShouldReturnFalse_WhenLoanIsReturned()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-10);
-        var dueDate = loanDate.AddDays(7); // Ã…terlÃ¤mningsdatum var fÃ¶r 3 dagar sedan
+        var dueDate = loanDate.AddDays(7); // Återlämningsdatum var för 3 dagar sedan
         var loan = new Loan(book, member, loanDate, dueDate);
         loan.MarkAsReturned(DateTime.Now);
 
@@ -178,14 +178,14 @@ public class LoanTests
         var isOverdue = loan.IsOverdue;
 
         // Assert
-        Assert.False(isOverdue); // Ã…terlÃ¤mnade lÃ¥n ska inte vara fÃ¶rsenade
+        Assert.False(isOverdue); // Återlämnade lån ska inte vara försenade
     }
 
     [Fact]
     public void CalculateLateFee_ShouldReturnZero_WhenNotOverdue()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = new DateTime(2024, 1, 1);
         var dueDate = new DateTime(2024, 1, 10);
@@ -202,7 +202,7 @@ public class LoanTests
     public void CalculateLateFee_ShouldCalculateFee_WhenOverdue()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = new DateTime(2024, 1, 1);
         var dueDate = new DateTime(2024, 1, 10);
@@ -220,7 +220,7 @@ public class LoanTests
     public void CalculateLateFee_ShouldReturnZero_WhenReturnedBeforeDueDate()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = new DateTime(2024, 1, 1);
         var dueDate = new DateTime(2024, 1, 10);
@@ -238,7 +238,7 @@ public class LoanTests
     public void CalculateLateFee_ShouldThrowException_WhenDailyFeeIsNegative()
     {
         // Arrange
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = new DateTime(2024, 1, 1);
         var dueDate = new DateTime(2024, 1, 10);

@@ -1,4 +1,4 @@
-ï»¿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class BookCatalogTests
@@ -8,7 +8,7 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
 
         // Act
         catalog.AddBook(book);
@@ -34,9 +34,9 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Titel 1", "FÃ¶rfattare 1", 2020);
-        var book2 = new Book("456", "Titel 2", "FÃ¶rfattare 2", 2021);
-        var book3 = new Book("789", "Titel 3", "FÃ¶rfattare 3", 2022);
+        var book1 = new Book(TestData.Isbn13_1, "Titel 1", "Författare 1", 2020);
+        var book2 = new Book(TestData.Isbn13_2, "Titel 2", "Författare 2", 2021);
+        var book3 = new Book(TestData.Isbn13_3, "Titel 3", "Författare 3", 2022);
 
         // Act
         catalog.AddBook(book1);
@@ -53,11 +53,11 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book = new Book("123", "Titel", "FÃ¶rfattare", 2020);
+        var book = new Book(TestData.Isbn13_1, "Titel", "Författare", 2020);
         catalog.AddBook(book);
 
         // Act
-        var result = catalog.RemoveBook("123");
+        var result = catalog.RemoveBook(TestData.Isbn13_1);
 
         // Assert
         Assert.True(result);
@@ -95,15 +95,15 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Titel 1", "FÃ¶rfattare 1", 2020);
-        var book2 = new Book("456", "Titel 2", "FÃ¶rfattare 2", 2021);
-        var book3 = new Book("789", "Titel 3", "FÃ¶rfattare 3", 2022);
+        var book1 = new Book(TestData.Isbn13_1, "Titel 1", "Författare 1", 2020);
+        var book2 = new Book(TestData.Isbn13_2, "Titel 2", "Författare 2", 2021);
+        var book3 = new Book(TestData.Isbn13_3, "Titel 3", "Författare 3", 2022);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
         catalog.AddBook(book3);
 
         // Act
-        catalog.RemoveBook("456");
+        catalog.RemoveBook(TestData.Isbn13_2);
 
         // Assert
         var books = catalog.GetAll();
@@ -131,8 +131,8 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Titel 1", "FÃ¶rfattare 1", 2020);
-        var book2 = new Book("456", "Titel 2", "FÃ¶rfattare 2", 2021);
+        var book1 = new Book(TestData.Isbn13_1, "Titel 1", "Författare 1", 2020);
+        var book2 = new Book(TestData.Isbn13_2, "Titel 2", "Författare 2", 2021);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
 
@@ -150,8 +150,8 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
 
@@ -168,8 +168,8 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
 
@@ -186,7 +186,7 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         catalog.AddBook(book);
 
         // Act
@@ -202,7 +202,7 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         catalog.AddBook(book);
 
         // Act
@@ -230,9 +230,9 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Zorro", "FÃ¶rfattare 1", 2020);
-        var book2 = new Book("456", "Alpha", "FÃ¶rfattare 2", 2021);
-        var book3 = new Book("789", "Beta", "FÃ¶rfattare 3", 2022);
+        var book1 = new Book(TestData.Isbn13_1, "Zorro", "Författare 1", 2020);
+        var book2 = new Book(TestData.Isbn13_2, "Alpha", "Författare 2", 2021);
+        var book3 = new Book(TestData.Isbn13_3, "Beta", "Författare 3", 2022);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
         catalog.AddBook(book3);
@@ -265,9 +265,9 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Ny bok", "FÃ¶rfattare 1", 2022);
-        var book2 = new Book("456", "Gammal bok", "FÃ¶rfattare 2", 1954);
-        var book3 = new Book("789", "Mellanbok", "FÃ¶rfattare 3", 2000);
+        var book1 = new Book(TestData.Isbn13_1, "Ny bok", "Författare 1", 2022);
+        var book2 = new Book(TestData.Isbn13_2, "Gammal bok", "Författare 2", 1954);
+        var book3 = new Book(TestData.Isbn13_3, "Mellanbok", "Författare 3", 2000);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
         catalog.AddBook(book3);
@@ -300,8 +300,8 @@ public class BookCatalogTests
     {
         // Arrange
         var catalog = new BookCatalog();
-        var book1 = new Book("123", "Bok 1", "FÃ¶rfattare 1", 2020);
-        var book2 = new Book("456", "Bok 2", "FÃ¶rfattare 2", 2020);
+        var book1 = new Book(TestData.Isbn13_1, "Bok 1", "Författare 1", 2020);
+        var book2 = new Book(TestData.Isbn13_2, "Bok 2", "Författare 2", 2020);
         catalog.AddBook(book1);
         catalog.AddBook(book2);
 

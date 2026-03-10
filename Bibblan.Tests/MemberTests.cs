@@ -1,4 +1,4 @@
-ï»¿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class MemberTests
@@ -63,7 +63,7 @@ public class MemberTests
         Assert.Contains("Medlem: Johan Johansson", info);
         Assert.Contains("ID: 12345", info);
         Assert.Contains("E-post: johan@testemail.se", info);
-        Assert.Contains("Inga lÃ¥nade bÃ¶cker.", info);
+        Assert.Contains("Inga lånade böcker.", info);
     }
 
     [Fact]
@@ -71,8 +71,8 @@ public class MemberTests
     {
         // Arrange
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var loanDate = DateTime.Now.AddDays(-5);
         var dueDate = loanDate.AddDays(14);
 
@@ -90,8 +90,8 @@ public class MemberTests
         Assert.Contains("J.K. Rowling", info);
         Assert.Contains("Sagan om ringen", info);
         Assert.Contains("J.R.R. Tolkien", info);
-        Assert.Contains("Ã…terlÃ¤mnas:", info);
-        Assert.DoesNotContain("Inga lÃ¥nade bÃ¶cker.", info);
+        Assert.Contains("Återlämnas:", info);
+        Assert.DoesNotContain("Inga lånade böcker.", info);
     }
 
     [Fact]
@@ -99,8 +99,8 @@ public class MemberTests
     {
         // Arrange
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var loanDate = DateTime.Now.AddDays(-10);
         var dueDate = loanDate.AddDays(14);
 
@@ -110,15 +110,15 @@ public class MemberTests
         member.AddLoan(loan1);
         member.AddLoan(loan2);
 
-        // LÃ¤mna tillbaka den fÃ¶rsta boken
+        // Lämna tillbaka den första boken
         loan1.MarkAsReturned(DateTime.Now);
 
         // Act
         var info = member.GetInfo();
 
         // Assert
-        Assert.DoesNotContain("Harry Potter", info); // Ã…terlÃ¤mnad bok ska inte visas
-        Assert.Contains("Sagan om ringen", info); // Aktivt lÃ¥n ska visas
+        Assert.DoesNotContain("Harry Potter", info); // Återlämnad bok ska inte visas
+        Assert.Contains("Sagan om ringen", info); // Aktivt lån ska visas
         Assert.Contains("J.R.R. Tolkien", info);
     }
 

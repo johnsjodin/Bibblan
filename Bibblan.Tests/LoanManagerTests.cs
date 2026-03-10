@@ -1,4 +1,4 @@
-ï»¿using Bibblan.Core;
+using Bibblan.Core;
 namespace Bibblan.Tests;
 
 public class LoanManagerTests
@@ -8,7 +8,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
@@ -46,7 +46,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
 
@@ -60,10 +60,10 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-5);
-        var dueDate = DateTime.Now.AddDays(-1); // I det fÃ¶rflutna
+        var dueDate = DateTime.Now.AddDays(-1); // I det förflutna
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => 
@@ -75,7 +75,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
@@ -92,7 +92,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);
@@ -109,7 +109,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -123,7 +123,7 @@ public class LoanManagerTests
         Assert.Equal(0m, result);
         Assert.True(loan.IsReturned);
         Assert.Equal(returnDate, loan.ReturnDate);
-        Assert.True(book.IsAvailable); // Boken ska vara tillgÃ¤nglig igen
+        Assert.True(book.IsAvailable); // Boken ska vara tillgänglig igen
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -160,7 +160,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -181,7 +181,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(10);
@@ -200,7 +200,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(10);
@@ -219,8 +219,8 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -244,7 +244,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -276,8 +276,8 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book1 = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
-        var book2 = new Book("456", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+        var book1 = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
+        var book2 = new Book(TestData.Isbn13_2, "Sagan om ringen", "J.R.R. Tolkien", 1954);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now.AddDays(-7);
         var dueDate = loanDate.AddDays(14);
@@ -299,7 +299,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
 
         // Act
@@ -326,7 +326,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => loanManager.ReserveBook(book, null));
@@ -337,7 +337,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         book.MarkAsBorrowed();
 
@@ -350,7 +350,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member1 = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var member2 = new Member("67890", "Anna Andersson", "anna@testemail.se");
         var loanDate = DateTime.Now;
@@ -366,7 +366,7 @@ public class LoanManagerTests
     {
         // Arrange
         var loanManager = new LoanManager();
-        var book = new Book("123", "Harry Potter", "J.K. Rowling", 1997);
+        var book = new Book(TestData.Isbn13_1, "Harry Potter", "J.K. Rowling", 1997);
         var member = new Member("12345", "Johan Johansson", "johan@testemail.se");
         var loanDate = DateTime.Now;
         var dueDate = loanDate.AddDays(14);

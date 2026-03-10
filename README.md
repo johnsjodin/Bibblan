@@ -10,7 +10,7 @@ Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Bibblan innehål
 ## 🎯 Version 2.0 - Nu med Blazor och Entity Framework!
 
 Den här versionen har utökats med:
-- **Blazor Server** - Modern webbgränssnitt med responsiv design
+- **Blazor Server** - Modernt webbgränssnitt med responsiv design
 - **Entity Framework Core** - Databashantering med SQL Server LocalDB
 - **Repository Pattern** - Separerad dataåtkomst för bättre testbarhet
 - **bUnit-tester** - Enhetstester för Blazor-komponenter

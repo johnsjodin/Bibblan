@@ -5,7 +5,7 @@
         <h5 class="card-title">@Book.Title</h5>
         <p class="card-text text-muted">@Book.Author (@Book.PublishedYear)</p>
         <p class="card-text">
-            <small><code>ISBN: @Book.ISBN</code></small>
+            <small><code>ISBN: @Book.FormattedISBN</code></small>
         </p>
         <span class="badge @GetStatusBadgeClass()">
             @GetStatusText()
