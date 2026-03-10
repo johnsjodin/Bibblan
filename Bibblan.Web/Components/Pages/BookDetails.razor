@@ -1,0 +1,330 @@
+@page "/books/{Id:int}"
+@using Bibblan.Data.Entities
+@using Bibblan.Data.Repositories
+@inject IBookRepository BookRepository
+@inject ILoanRepository LoanRepository
+@inject IMemberRepository MemberRepository
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Bokdetaljer - Bibblan</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laddar...</span>
+        </div>
+    </div>
+}
+else if (_book == null)
+{
+    <div class="alert alert-danger">
+        <h4>Boken hittades inte</h4>
+        <p>Boken med ID @Id finns inte i systemet.</p>
+        <a href="books" class="btn btn-primary">← Tillbaka till böcker</a>
+    </div>
+}
+else
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="books">Böcker</a></li>
+            <li class="breadcrumb-item active">@_book.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2>📖 @_book.Title</h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Författare</dt>
+                        <dd class="col-sm-9">@_book.Author</dd>
+
+                        <dt class="col-sm-3">ISBN</dt>
+                        <dd class="col-sm-9"><code>@_book.ISBN</code></dd>
+
+                        <dt class="col-sm-3">Utgivningsår</dt>
+                        <dd class="col-sm-9">@_book.PublishedYear</dd>
+
+                        <dt class="col-sm-3">Status</dt>
+                        <dd class="col-sm-9">
+                            @if (_book.IsAvailable)
+                            {
+                                @if (_book.IsReserved)
+                                {
+                                    <span class="badge bg-warning fs-6">Reserverad av @_book.ReservedBy?.Name</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success fs-6">Tillgänglig</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary fs-6">Utlånad</span>
+                                @if (_book.IsReserved)
+                                {
+                                    <span class="badge bg-warning fs-6 ms-1">Reserverad</span>
+                                }
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>📋 Lånehistorik</h4>
+                </div>
+                <div class="card-body">
+                    @if (_loans == null || !_loans.Any())
+                    {
+                        <p class="text-muted">Boken har ingen lånehistorik.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Låntagare</th>
+                                    <th>Lånedatum</th>
+                                    <th>Förfallodatum</th>
+                                    <th>Återlämnad</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var loan in _loans)
+                                {
+                                    <tr>
+                                        <td>@loan.Member.Name</td>
+                                        <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@(loan.ReturnDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                        <td>
+                                            @if (loan.IsReturned)
+                                            {
+                                                <span class="badge bg-success">Återlämnad</span>
+                                            }
+                                            else if (loan.IsOverdue)
+                                            {
+                                                <span class="badge bg-danger">Försenad</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-info">Pågående</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>⚡ Åtgärder</h4>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(_message))
+                    {
+                        <div class="alert @(_isError ? "alert-danger" : "alert-success") alert-dismissible">
+                            @_message
+                            <button type="button" class="btn-close" @onclick="() => _message = string.Empty"></button>
+                        </div>
+                    }
+
+                    @if (_book.IsAvailable && !_book.IsReserved)
+                    {
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success" @onclick="ShowLoanModal">
+                                📤 Låna ut
+                            </button>
+                        </div>
+                    }
+                    else if (!_book.IsAvailable)
+                    {
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" @onclick="ReturnBook">
+                                📥 Återlämna
+                            </button>
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-danger" @onclick="DeleteBook">
+                            🗑️ Ta bort bok
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (_showLoanModal)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Låna ut: @_book.Title</h5>
+                        <button type="button" class="btn-close" @onclick="CloseLoanModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Välj låntagare</label>
+                            <select class="form-select" @bind="_selectedMemberId">
+                                <option value="0">-- Välj medlem --</option>
+                                @foreach (var member in _members)
+                                {
+                                    <option value="@member.Id">@member.Name (@member.MemberId)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Förfallodatum</label>
+                            <input type="date" class="form-control" @bind="_dueDate" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseLoanModal">Avbryt</button>
+                        <button type="button" class="btn btn-success" @onclick="CreateLoan" disabled="@(_selectedMemberId == 0)">
+                            Skapa lån
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private BookEntity? _book;
+    private IEnumerable<LoanEntity> _loans = new List<LoanEntity>();
+    private IEnumerable<MemberEntity> _members = new List<MemberEntity>();
+    private bool _isLoading = true;
+    private string _message = string.Empty;
+    private bool _isError = false;
+
+    private bool _showLoanModal = false;
+    private int _selectedMemberId = 0;
+    private DateTime _dueDate = DateTime.Now.AddDays(14);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBook();
+    }
+
+    private async Task LoadBook()
+    {
+        _isLoading = true;
+        try
+        {
+            _book = await BookRepository.GetByIdAsync(Id);
+            if (_book != null)
+            {
+                _loans = await LoanRepository.GetLoansByBookIdAsync(Id);
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task ShowLoanModal()
+    {
+        _members = await MemberRepository.GetAllAsync();
+        _selectedMemberId = 0;
+        _dueDate = DateTime.Now.AddDays(14);
+        _showLoanModal = true;
+    }
+
+    private void CloseLoanModal()
+    {
+        _showLoanModal = false;
+    }
+
+    private async Task CreateLoan()
+    {
+        try
+        {
+            var loan = new LoanEntity
+            {
+                BookId = _book!.Id,
+                MemberId = _selectedMemberId,
+                LoanDate = DateTime.Now,
+                DueDate = _dueDate
+            };
+
+            await LoanRepository.AddAsync(loan);
+
+            _book.IsAvailable = false;
+            await BookRepository.UpdateAsync(_book);
+
+            _message = "Lånet har skapats!";
+            _isError = false;
+            CloseLoanModal();
+            await LoadBook();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
+            _isError = true;
+        }
+    }
+
+    private async Task ReturnBook()
+    {
+        try
+        {
+            // Hitta aktivt lån
+            var activeLoan = _loans.FirstOrDefault(l => !l.IsReturned);
+            if (activeLoan != null)
+            {
+                activeLoan.ReturnDate = DateTime.Now;
+                await LoanRepository.UpdateAsync(activeLoan);
+            }
+
+            _book!.IsAvailable = true;
+            await BookRepository.UpdateAsync(_book);
+
+            _message = "Boken har återlämnats!";
+            _isError = false;
+            await LoadBook();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
+            _isError = true;
+        }
+    }
+
+    private async Task DeleteBook()
+    {
+        try
+        {
+            await BookRepository.DeleteAsync(Id);
+            Navigation.NavigateTo("books");
+        }
+        catch (Exception ex)
+        {
+            _message = $"Kunde inte ta bort boken: {ex.Message}";
+            _isError = true;
+        }
+    }
+}

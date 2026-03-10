@@ -1,0 +1,123 @@
+@page "/"
+@using Bibblan.Data.Repositories
+@inject IBookRepository BookRepository
+@inject IMemberRepository MemberRepository
+@inject ILoanRepository LoanRepository
+@rendermode InteractiveServer
+
+<PageTitle>Bibblan - Startsida</PageTitle>
+
+<h1>📚 Välkommen till Bibblan</h1>
+
+<p class="lead">Ditt digitala bibliotekssystem för hantering av böcker, medlemmar och utlåning.</p>
+
+@if (_isLoading)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laddar...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📖 Böcker</h5>
+                    <p class="card-text display-4">@_totalBooks</p>
+                    <p class="card-text">Totalt antal böcker</p>
+                </div>
+                <div class="card-footer">
+                    <a href="books" class="text-white">Visa alla böcker →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">✅ Tillgängliga</h5>
+                    <p class="card-text display-4">@_availableBooks</p>
+                    <p class="card-text">Böcker att låna</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title">👥 Medlemmar</h5>
+                    <p class="card-text display-4">@_totalMembers</p>
+                    <p class="card-text">Registrerade</p>
+                </div>
+                <div class="card-footer">
+                    <a href="members" class="text-white">Visa alla medlemmar →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white @(_overdueLoans > 0 ? "bg-danger" : "bg-secondary") h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📋 Aktiva lån</h5>
+                    <p class="card-text display-4">@_activeLoans</p>
+                    <p class="card-text">@(_overdueLoans > 0 ? $"{_overdueLoans} försenade!" : "Inga försenade")</p>
+                </div>
+                <div class="card-footer">
+                    <a href="loans" class="text-white">Hantera utlåning →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🚀 Snabbåtgärder</h5>
+                </div>
+                <div class="card-body">
+                    <a href="books" class="btn btn-outline-primary me-2 mb-2">Sök böcker</a>
+                    <a href="loans" class="btn btn-outline-success me-2 mb-2">Nytt lån</a>
+                    <a href="members" class="btn btn-outline-info mb-2">Ny medlem</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>ℹ️ Systeminformation</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Version:</strong> 2.0 (Blazor)</p>
+                    <p><strong>Databas:</strong> SQL Server LocalDB</p>
+                    <p><strong>Senaste uppdatering:</strong> @DateTime.Now.ToString("yyyy-MM-dd")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _isLoading = true;
+    private int _totalBooks;
+    private int _availableBooks;
+    private int _totalMembers;
+    private int _activeLoans;
+    private int _overdueLoans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _totalBooks = await BookRepository.GetTotalCountAsync();
+            _availableBooks = await BookRepository.GetAvailableCountAsync();
+            _totalMembers = await MemberRepository.GetTotalCountAsync();
+            _activeLoans = await LoanRepository.GetActiveLoansCountAsync();
+            _overdueLoans = await LoanRepository.GetOverdueLoansCountAsync();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

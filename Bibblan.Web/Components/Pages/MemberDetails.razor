@@ -1,0 +1,193 @@
+@page "/members/{Id:int}"
+@using Bibblan.Data.Entities
+@using Bibblan.Data.Repositories
+@inject IMemberRepository MemberRepository
+@inject ILoanRepository LoanRepository
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Medlemsdetaljer - Bibblan</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laddar...</span>
+        </div>
+    </div>
+}
+else if (_member == null)
+{
+    <div class="alert alert-danger">
+        <h4>Medlemmen hittades inte</h4>
+        <p>Medlemmen med ID @Id finns inte i systemet.</p>
+        <a href="members" class="btn btn-primary">← Tillbaka till medlemmar</a>
+    </div>
+}
+else
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="members">Medlemmar</a></li>
+            <li class="breadcrumb-item active">@_member.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>👤 @_member.Name</h3>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>Medlems-ID</dt>
+                        <dd><code>@_member.MemberId</code></dd>
+
+                        <dt>E-post</dt>
+                        <dd><a href="mailto:@_member.Email">@_member.Email</a></dd>
+
+                        <dt>Medlem sedan</dt>
+                        <dd>@_member.MemberSince.ToString("yyyy-MM-dd")</dd>
+
+                        <dt>Aktiva lån</dt>
+                        <dd>
+                            @{
+                                var activeCount = _member.Loans?.Count(l => l.ReturnDate == null) ?? 0;
+                            }
+                            <span class="badge @(activeCount > 0 ? "bg-info" : "bg-secondary") fs-6">
+                                @activeCount st
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline-danger btn-sm" @onclick="DeleteMember">
+                        🗑️ Ta bort medlem
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>📚 Lånehistorik</h4>
+                </div>
+                <div class="card-body">
+                    @if (_member.Loans == null || !_member.Loans.Any())
+                    {
+                        <p class="text-muted">Medlemmen har ingen lånehistorik.</p>
+                    }
+                    else
+                    {
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item">
+                                <button class="nav-link @(_showActiveOnly ? "active" : "")" @onclick="() => _showActiveOnly = true">
+                                    Aktiva lån (@_member.Loans.Count(l => l.ReturnDate == null))
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link @(!_showActiveOnly ? "active" : "")" @onclick="() => _showActiveOnly = false">
+                                    Alla lån (@_member.Loans.Count)
+                                </button>
+                            </li>
+                        </ul>
+
+                        var displayedLoans = _showActiveOnly
+                            ? _member.Loans.Where(l => l.ReturnDate == null)
+                            : _member.Loans;
+
+                        if (!displayedLoans.Any())
+                        {
+                            <p class="text-muted">Inga aktiva lån.</p>
+                        }
+                        else
+                        {
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Bok</th>
+                                        <th>Lånedatum</th>
+                                        <th>Förfallodatum</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var loan in displayedLoans.OrderByDescending(l => l.LoanDate))
+                                    {
+                                        <tr class="@(loan.IsOverdue ? "table-danger" : "")">
+                                            <td>
+                                                <a href="books/@loan.BookId">@loan.Book.Title</a>
+                                            </td>
+                                            <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                                            <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                @if (loan.IsReturned)
+                                                {
+                                                    <span class="badge bg-success">
+                                                        Återlämnad @loan.ReturnDate?.ToString("yyyy-MM-dd")
+                                                    </span>
+                                                }
+                                                else if (loan.IsOverdue)
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        Försenad (@((DateTime.Now - loan.DueDate).Days) dagar)
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info">Pågående</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private MemberEntity? _member;
+    private bool _isLoading = true;
+    private bool _showActiveOnly = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMember();
+    }
+
+    private async Task LoadMember()
+    {
+        _isLoading = true;
+        try
+        {
+            _member = await MemberRepository.GetByIdAsync(Id);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task DeleteMember()
+    {
+        try
+        {
+            await MemberRepository.DeleteAsync(Id);
+            Navigation.NavigateTo("members");
+        }
+        catch (Exception ex)
+        {
+            // Visa felmeddelande
+        }
+    }
+}

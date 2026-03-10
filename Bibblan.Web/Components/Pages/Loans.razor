@@ -1,0 +1,352 @@
+@page "/loans"
+@using Bibblan.Data.Entities
+@using Bibblan.Data.Repositories
+@inject ILoanRepository LoanRepository
+@inject IBookRepository BookRepository
+@inject IMemberRepository MemberRepository
+@rendermode InteractiveServer
+
+<PageTitle>Utlåning - Bibblan</PageTitle>
+
+<h1>📋 Utlåning</h1>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <button class="nav-link @(_filter == LoanFilter.Active ? "active" : "")"
+                        @onclick="() => SetFilter(LoanFilter.Active)">
+                    Aktiva lån
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link @(_filter == LoanFilter.Overdue ? "active" : "")"
+                        @onclick="() => SetFilter(LoanFilter.Overdue)">
+                    Försenade
+                    @if (_overdueCount > 0)
+                    {
+                        <span class="badge bg-danger ms-1">@_overdueCount</span>
+                    }
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link @(_filter == LoanFilter.All ? "active" : "")"
+                        @onclick="() => SetFilter(LoanFilter.All)">
+                    Alla lån
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-success" @onclick="ShowNewLoanModal">
+            ➕ Nytt lån
+        </button>
+    </div>
+</div>
+
+@if (_isLoading)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laddar...</span>
+        </div>
+    </div>
+}
+else if (_loans == null || !_loans.Any())
+{
+    <div class="alert alert-info">
+        @switch (_filter)
+        {
+            case LoanFilter.Active:
+                <span>Inga aktiva lån just nu.</span>
+                break;
+            case LoanFilter.Overdue:
+                <span>🎉 Inga försenade lån! Bra jobbat!</span>
+                break;
+            case LoanFilter.All:
+                <span>Inga lån finns registrerade.</span>
+                break;
+        }
+    </div>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(_message))
+    {
+        <div class="alert @(_isError ? "alert-danger" : "alert-success") alert-dismissible">
+            @_message
+            <button type="button" class="btn-close" @onclick="() => _message = string.Empty"></button>
+        </div>
+    }
+
+    <p class="text-muted">Visar @_loans.Count() lån</p>
+
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Bok</th>
+                <th>Låntagare</th>
+                <th>Lånedatum</th>
+                <th>Förfallodatum</th>
+                <th>Status</th>
+                <th>Åtgärder</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in _loans)
+            {
+                <tr class="@(loan.IsOverdue ? "table-danger" : "")">
+                    <td>
+                        <a href="books/@loan.BookId">@loan.Book.Title</a>
+                        <br />
+                        <small class="text-muted">@loan.Book.Author</small>
+                    </td>
+                    <td>
+                        <a href="members/@loan.MemberId">@loan.Member.Name</a>
+                    </td>
+                    <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @loan.DueDate.ToString("yyyy-MM-dd")
+                        @if (loan.IsOverdue)
+                        {
+                            <br />
+                            <small class="text-danger">
+                                (@((DateTime.Now - loan.DueDate).Days) dagar försenad)
+                            </small>
+                        }
+                    </td>
+                    <td>
+                        @if (loan.IsReturned)
+                        {
+                            <span class="badge bg-success">Återlämnad</span>
+                        }
+                        else if (loan.IsOverdue)
+                        {
+                            <span class="badge bg-danger">Försenad</span>
+                        }
+                        else
+                        {
+                            var daysLeft = (loan.DueDate - DateTime.Now).Days;
+                            <span class="badge @(daysLeft <= 3 ? "bg-warning" : "bg-info")">
+                                @daysLeft dagar kvar
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        @if (!loan.IsReturned)
+                        {
+                            <button class="btn btn-sm btn-primary" @onclick="() => ReturnLoan(loan)">
+                                📥 Återlämna
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (_showNewLoanModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Skapa nytt lån</h5>
+                    <button type="button" class="btn-close" @onclick="CloseNewLoanModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(_modalError))
+                    {
+                        <div class="alert alert-danger">@_modalError</div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Välj bok</label>
+                                <select class="form-select" @bind="_selectedBookId">
+                                    <option value="0">-- Välj en tillgänglig bok --</option>
+                                    @foreach (var book in _availableBooks)
+                                    {
+                                        <option value="@book.Id">@book.Title - @book.Author</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Välj medlem</label>
+                                <select class="form-select" @bind="_selectedMemberId">
+                                    <option value="0">-- Välj en medlem --</option>
+                                    @foreach (var member in _allMembers)
+                                    {
+                                        <option value="@member.Id">@member.Name (@member.MemberId)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Lånedatum</label>
+                                <input type="date" class="form-control" @bind="_loanDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Förfallodatum</label>
+                                <input type="date" class="form-control" @bind="_dueDate" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseNewLoanModal">Avbryt</button>
+                    <button type="button" class="btn btn-success" @onclick="CreateNewLoan"
+                            disabled="@(_selectedBookId == 0 || _selectedMemberId == 0)">
+                        Skapa lån
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<LoanEntity> _loans = new List<LoanEntity>();
+    private bool _isLoading = true;
+    private LoanFilter _filter = LoanFilter.Active;
+    private int _overdueCount = 0;
+    private string _message = string.Empty;
+    private bool _isError = false;
+
+    // Modal-state
+    private bool _showNewLoanModal = false;
+    private IEnumerable<BookEntity> _availableBooks = new List<BookEntity>();
+    private IEnumerable<MemberEntity> _allMembers = new List<MemberEntity>();
+    private int _selectedBookId = 0;
+    private int _selectedMemberId = 0;
+    private DateTime _loanDate = DateTime.Now;
+    private DateTime _dueDate = DateTime.Now.AddDays(14);
+    private string _modalError = string.Empty;
+
+    private enum LoanFilter { Active, Overdue, All }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _overdueCount = await LoanRepository.GetOverdueLoansCountAsync();
+        await LoadLoans();
+    }
+
+    private async Task LoadLoans()
+    {
+        _isLoading = true;
+        try
+        {
+            _loans = _filter switch
+            {
+                LoanFilter.Active => await LoanRepository.GetActiveLoansAsync(),
+                LoanFilter.Overdue => await LoanRepository.GetOverdueLoansAsync(),
+                LoanFilter.All => await LoanRepository.GetAllAsync(),
+                _ => await LoanRepository.GetActiveLoansAsync()
+            };
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SetFilter(LoanFilter filter)
+    {
+        _filter = filter;
+        await LoadLoans();
+    }
+
+    private async Task ReturnLoan(LoanEntity loan)
+    {
+        try
+        {
+            loan.ReturnDate = DateTime.Now;
+            await LoanRepository.UpdateAsync(loan);
+
+            // Uppdatera bokens tillgänglighet
+            var book = await BookRepository.GetByIdAsync(loan.BookId);
+            if (book != null)
+            {
+                book.IsAvailable = true;
+                await BookRepository.UpdateAsync(book);
+            }
+
+            _message = $"'{loan.Book.Title}' har återlämnats!";
+            _isError = false;
+            _overdueCount = await LoanRepository.GetOverdueLoansCountAsync();
+            await LoadLoans();
+        }
+        catch (Exception ex)
+        {
+            _message = $"Fel: {ex.Message}";
+            _isError = true;
+        }
+    }
+
+    private async Task ShowNewLoanModal()
+    {
+        var allBooks = await BookRepository.GetAllAsync();
+        _availableBooks = allBooks.Where(b => b.IsAvailable && !b.IsReserved);
+        _allMembers = await MemberRepository.GetAllAsync();
+        _selectedBookId = 0;
+        _selectedMemberId = 0;
+        _loanDate = DateTime.Now;
+        _dueDate = DateTime.Now.AddDays(14);
+        _modalError = string.Empty;
+        _showNewLoanModal = true;
+    }
+
+    private void CloseNewLoanModal()
+    {
+        _showNewLoanModal = false;
+    }
+
+    private async Task CreateNewLoan()
+    {
+        try
+        {
+            if (_loanDate > _dueDate)
+            {
+                _modalError = "Lånedatum måste vara före förfallodatum.";
+                return;
+            }
+
+            var loan = new LoanEntity
+            {
+                BookId = _selectedBookId,
+                MemberId = _selectedMemberId,
+                LoanDate = _loanDate,
+                DueDate = _dueDate
+            };
+
+            await LoanRepository.AddAsync(loan);
+
+            // Uppdatera bokens tillgänglighet
+            var book = await BookRepository.GetByIdAsync(_selectedBookId);
+            if (book != null)
+            {
+                book.IsAvailable = false;
+                await BookRepository.UpdateAsync(book);
+            }
+
+            _message = "Lånet har skapats!";
+            _isError = false;
+            CloseNewLoanModal();
+            await LoadLoans();
+        }
+        catch (Exception ex)
+        {
+            _modalError = $"Fel: {ex.Message}";
+        }
+    }
+}

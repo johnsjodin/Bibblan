@@ -1,0 +1,236 @@
+@page "/members"
+@using Bibblan.Data.Entities
+@using Bibblan.Data.Repositories
+@using System.ComponentModel.DataAnnotations
+@inject IMemberRepository MemberRepository
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Medlemmar - Bibblan</PageTitle>
+
+<h1>👥 Medlemmar</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Sök på namn, e-post eller medlems-ID..."
+                   @bind="_searchTerm" @bind:event="oninput" @onkeyup="HandleSearch" />
+            <button class="btn btn-outline-secondary" type="button" @onclick="SearchMembers">
+                🔍 Sök
+            </button>
+            @if (!string.IsNullOrEmpty(_searchTerm))
+            {
+                <button class="btn btn-outline-danger" type="button" @onclick="ClearSearch">
+                    ✕
+                </button>
+            }
+        </div>
+    </div>
+    <div class="col-md-6 text-end">
+        <button class="btn btn-primary" @onclick="ShowAddMemberModal">
+            ➕ Ny medlem
+        </button>
+    </div>
+</div>
+
+@if (_isLoading)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laddar...</span>
+        </div>
+    </div>
+}
+else if (_members == null || !_members.Any())
+{
+    <div class="alert alert-info">
+        @if (string.IsNullOrEmpty(_searchTerm))
+        {
+            <span>Inga medlemmar finns registrerade. Lägg till din första medlem!</span>
+        }
+        else
+        {
+            <span>Inga medlemmar matchade sökningen "@_searchTerm".</span>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">Visar @_members.Count() medlemmar</p>
+
+    <div class="row">
+        @foreach (var member in _members)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@member.Name</h5>
+                        <p class="card-text">
+                            <small class="text-muted">ID: @member.MemberId</small><br />
+                            <small>📧 @member.Email</small><br />
+                            <small>📅 Medlem sedan: @member.MemberSince.ToString("yyyy-MM-dd")</small>
+                        </p>
+                        <div class="mt-2">
+                            @{
+                                var activeLoans = member.Loans?.Count(l => l.ReturnDate == null) ?? 0;
+                            }
+                            @if (activeLoans > 0)
+                            {
+                                <span class="badge bg-info">@activeLoans aktiva lån</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inga aktiva lån</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="members/@member.Id" class="btn btn-sm btn-outline-primary">Visa detaljer</a>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteMember(member.Id)">
+                            Ta bort
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (_showAddModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrera ny medlem</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <EditForm Model="@_newMember" OnValidSubmit="HandleAddMember">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        @if (!string.IsNullOrEmpty(_errorMessage))
+                        {
+                            <div class="alert alert-danger">@_errorMessage</div>
+                        }
+                        <div class="mb-3">
+                            <label class="form-label">Medlems-ID</label>
+                            <InputText @bind-Value="_newMember.MemberId" class="form-control" placeholder="T.ex. M003" />
+                            <ValidationMessage For="@(() => _newMember.MemberId)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Namn</label>
+                            <InputText @bind-Value="_newMember.Name" class="form-control" />
+                            <ValidationMessage For="@(() => _newMember.Name)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">E-postadress</label>
+                            <InputText @bind-Value="_newMember.Email" class="form-control" type="email" />
+                            <ValidationMessage For="@(() => _newMember.Email)" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Avbryt</button>
+                        <button type="submit" class="btn btn-primary">Registrera</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<MemberEntity> _members = new List<MemberEntity>();
+    private bool _isLoading = true;
+    private string _searchTerm = string.Empty;
+    private bool _showAddModal = false;
+    private MemberEntity _newMember = new();
+    private string _errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMembers();
+    }
+
+    private async Task LoadMembers()
+    {
+        _isLoading = true;
+        try
+        {
+            _members = string.IsNullOrWhiteSpace(_searchTerm)
+                ? await MemberRepository.GetAllAsync()
+                : await MemberRepository.SearchAsync(_searchTerm);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task HandleSearch(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchMembers();
+        }
+    }
+
+    private async Task SearchMembers()
+    {
+        await LoadMembers();
+    }
+
+    private async Task ClearSearch()
+    {
+        _searchTerm = string.Empty;
+        await LoadMembers();
+    }
+
+    private void ShowAddMemberModal()
+    {
+        _newMember = new MemberEntity { MemberSince = DateTime.Now };
+        _errorMessage = string.Empty;
+        _showAddModal = true;
+    }
+
+    private void CloseModal()
+    {
+        _showAddModal = false;
+        _errorMessage = string.Empty;
+    }
+
+    private async Task HandleAddMember()
+    {
+        try
+        {
+            // Validera att medlems-ID inte redan finns
+            var existing = await MemberRepository.GetByMemberIdAsync(_newMember.MemberId);
+            if (existing != null)
+            {
+                _errorMessage = "En medlem med detta ID finns redan.";
+                return;
+            }
+
+            _newMember.MemberSince = DateTime.Now;
+            await MemberRepository.AddAsync(_newMember);
+            await LoadMembers();
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Fel vid registrering: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteMember(int id)
+    {
+        try
+        {
+            await MemberRepository.DeleteAsync(id);
+            await LoadMembers();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Kunde inte ta bort medlemmen: {ex.Message}";
+        }
+    }
+}

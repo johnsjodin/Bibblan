@@ -3,5 +3,7 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="Bibblan.Core/Bibblan.Core.csproj" />
+  <Project Path="Bibblan.Data/Bibblan.Data.csproj" />
   <Project Path="Bibblan.Tests/Bibblan.Tests.csproj" />
+  <Project Path="Bibblan.Web/Bibblan.Web.csproj" />
 </Solution>

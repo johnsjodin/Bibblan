@@ -1,0 +1,46 @@
+@using Bibblan.Data.Entities
+
+<div class="card book-card @(Book.IsAvailable ? "available" : "borrowed")">
+    <div class="card-body">
+        <h5 class="card-title">@Book.Title</h5>
+        <p class="card-text text-muted">@Book.Author (@Book.PublishedYear)</p>
+        <p class="card-text">
+            <small><code>ISBN: @Book.ISBN</code></small>
+        </p>
+        <span class="badge @GetStatusBadgeClass()">
+            @GetStatusText()
+        </span>
+    </div>
+    @if (ShowActions)
+    {
+        <div class="card-footer">
+            <a href="books/@Book.Id" class="btn btn-sm btn-outline-primary">Visa detaljer</a>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public BookEntity Book { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowActions { get; set; } = true;
+
+    private string GetStatusBadgeClass()
+    {
+        if (Book.IsAvailable)
+        {
+            return Book.IsReserved ? "bg-warning" : "bg-success";
+        }
+        return Book.IsReserved ? "bg-danger" : "bg-secondary";
+    }
+
+    private string GetStatusText()
+    {
+        if (Book.IsAvailable)
+        {
+            return Book.IsReserved ? "Reserverad" : "Tillgänglig";
+        }
+        return Book.IsReserved ? "Utlånad (Reserverad)" : "Utlånad";
+    }
+}
