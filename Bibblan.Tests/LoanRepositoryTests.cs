@@ -26,7 +26,7 @@ public class LoanRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(AddAsync_ShouldCreateLoan));
 
-        var book = new BookEntity { ISBN = "123", Title = "Bok", Author = "Författare", PublishedYear = 2020 };
+        var book = new BookEntity { ISBN = TestData.Isbn13_1, Title = "Bok", Author = "Författare", PublishedYear = 2020 };
         var member = new MemberEntity { MemberId = "M001", Name = "Test", Email = "test@test.se" };
         context.Books.Add(book);
         context.Members.Add(member);
@@ -57,8 +57,8 @@ public class LoanRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(GetActiveLoansAsync_ShouldReturnOnlyActiveLoans));
 
-        var book1 = new BookEntity { ISBN = "1", Title = "Bok 1", Author = "Författare", PublishedYear = 2020 };
-        var book2 = new BookEntity { ISBN = "2", Title = "Bok 2", Author = "Författare", PublishedYear = 2020 };
+        var book1 = new BookEntity { ISBN = TestData.Isbn13_1, Title = "Bok 1", Author = "Författare", PublishedYear = 2020 };
+        var book2 = new BookEntity { ISBN = TestData.Isbn13_2, Title = "Bok 2", Author = "Författare", PublishedYear = 2020 };
         var member = new MemberEntity { MemberId = "M001", Name = "Test", Email = "test@test.se" };
         context.Books.AddRange(book1, book2);
         context.Members.Add(member);
@@ -100,7 +100,7 @@ public class LoanRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(GetOverdueLoansAsync_ShouldReturnOverdueLoans));
 
-        var book = new BookEntity { ISBN = "1", Title = "Bok", Author = "Författare", PublishedYear = 2020 };
+        var book = new BookEntity { ISBN = TestData.Isbn13_1, Title = "Bok", Author = "Författare", PublishedYear = 2020 };
         var member = new MemberEntity { MemberId = "M001", Name = "Test", Email = "test@test.se" };
         context.Books.Add(book);
         context.Members.Add(member);
@@ -132,7 +132,7 @@ public class LoanRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(UpdateAsync_ShouldMarkLoanAsReturned));
 
-        var book = new BookEntity { ISBN = "1", Title = "Bok", Author = "Författare", PublishedYear = 2020 };
+        var book = new BookEntity { ISBN = TestData.Isbn13_1, Title = "Bok", Author = "Författare", PublishedYear = 2020 };
         var member = new MemberEntity { MemberId = "M001", Name = "Test", Email = "test@test.se" };
         context.Books.Add(book);
         context.Members.Add(member);

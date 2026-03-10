@@ -51,7 +51,7 @@ public class BookRepositoryTests
         using var context = CreateContext(nameof(GetByIdAsync_ShouldReturnCorrectBook));
         var book = new BookEntity
         {
-            ISBN = "123-456",
+            ISBN = TestData.Isbn13_1,
             Title = "En bok",
             Author = "En författare",
             PublishedYear = 2020
@@ -75,7 +75,7 @@ public class BookRepositoryTests
         using var context = CreateContext(nameof(GetByISBNAsync_ShouldReturnCorrectBook));
         var book = new BookEntity
         {
-            ISBN = "978-1-234567-89-0",
+            ISBN = TestData.Isbn13_2,
             Title = "ISBN-testbok",
             Author = "Författare",
             PublishedYear = 2023
@@ -85,7 +85,7 @@ public class BookRepositoryTests
         var repository = new BookRepository(context);
 
         // Act
-        var result = await repository.GetByISBNAsync("978-1-234567-89-0");
+        var result = await repository.GetByISBNAsync(TestData.Isbn13_2);
 
         // Assert
         Assert.NotNull(result);
@@ -98,9 +98,9 @@ public class BookRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(SearchAsync_ShouldFindBooksByTitle));
         context.Books.AddRange(
-            new BookEntity { ISBN = "1", Title = "Pippi Långstrump", Author = "Astrid Lindgren", PublishedYear = 1945 },
-            new BookEntity { ISBN = "2", Title = "Emil i Lönneberga", Author = "Astrid Lindgren", PublishedYear = 1963 },
-            new BookEntity { ISBN = "3", Title = "Harry Potter", Author = "J.K. Rowling", PublishedYear = 1997 }
+            new BookEntity { ISBN = TestData.Isbn13_1, Title = "Pippi Långstrump", Author = "Astrid Lindgren", PublishedYear = 1945 },
+            new BookEntity { ISBN = TestData.Isbn13_2, Title = "Emil i Lönneberga", Author = "Astrid Lindgren", PublishedYear = 1963 },
+            new BookEntity { ISBN = TestData.Isbn13_3, Title = "Harry Potter", Author = "J.K. Rowling", PublishedYear = 1997 }
         );
         await context.SaveChangesAsync();
         var repository = new BookRepository(context);
@@ -119,9 +119,9 @@ public class BookRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(SearchAsync_ShouldFindBooksByAuthor));
         context.Books.AddRange(
-            new BookEntity { ISBN = "1", Title = "Pippi", Author = "Astrid Lindgren", PublishedYear = 1945 },
-            new BookEntity { ISBN = "2", Title = "Emil", Author = "Astrid Lindgren", PublishedYear = 1963 },
-            new BookEntity { ISBN = "3", Title = "Harry Potter", Author = "J.K. Rowling", PublishedYear = 1997 }
+            new BookEntity { ISBN = TestData.Isbn13_1, Title = "Pippi", Author = "Astrid Lindgren", PublishedYear = 1945 },
+            new BookEntity { ISBN = TestData.Isbn13_2, Title = "Emil", Author = "Astrid Lindgren", PublishedYear = 1963 },
+            new BookEntity { ISBN = TestData.Isbn13_3, Title = "Harry Potter", Author = "J.K. Rowling", PublishedYear = 1997 }
         );
         await context.SaveChangesAsync();
         var repository = new BookRepository(context);
@@ -139,9 +139,9 @@ public class BookRepositoryTests
         // Arrange
         using var context = CreateContext(nameof(GetAllAsync_ShouldReturnAllBooks));
         context.Books.AddRange(
-            new BookEntity { ISBN = "1", Title = "Bok 1", Author = "Författare 1", PublishedYear = 2020 },
-            new BookEntity { ISBN = "2", Title = "Bok 2", Author = "Författare 2", PublishedYear = 2021 },
-            new BookEntity { ISBN = "3", Title = "Bok 3", Author = "Författare 3", PublishedYear = 2022 }
+            new BookEntity { ISBN = TestData.Isbn13_1, Title = "Bok 1", Author = "Författare 1", PublishedYear = 2020 },
+            new BookEntity { ISBN = TestData.Isbn13_2, Title = "Bok 2", Author = "Författare 2", PublishedYear = 2021 },
+            new BookEntity { ISBN = TestData.Isbn13_3, Title = "Bok 3", Author = "Författare 3", PublishedYear = 2022 }
         );
         await context.SaveChangesAsync();
         var repository = new BookRepository(context);
@@ -160,7 +160,7 @@ public class BookRepositoryTests
         using var context = CreateContext(nameof(UpdateAsync_ShouldModifyBook));
         var book = new BookEntity
         {
-            ISBN = "123",
+            ISBN = TestData.Isbn13_1,
             Title = "Originaltitel",
             Author = "Författare",
             PublishedYear = 2020,
@@ -186,7 +186,7 @@ public class BookRepositoryTests
         using var context = CreateContext(nameof(DeleteAsync_ShouldRemoveBook));
         var book = new BookEntity
         {
-            ISBN = "ta-bort",
+            ISBN = TestData.Isbn10_1,
             Title = "Ska tas bort",
             Author = "Författare",
             PublishedYear = 2020
