@@ -86,8 +86,9 @@ else
                         }
                         <div class="mb-3">
                             <label class="form-label">Medlems-ID</label>
-                            <InputText @bind-Value="_newMember.MemberId" class="form-control" placeholder="T.ex. M003" />
-                            <ValidationMessage For="@(() => _newMember.MemberId)" />
+                            <input type="text" class="form-control" value="@_newMember.MemberId" readonly 
+                                   style="background-color: #e9ecef;" />
+                            <small class="text-muted">Tilldelas automatiskt</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Namn</label>
@@ -157,9 +158,14 @@ else
         await LoadMembers();
     }
 
-    private void ShowAddMemberModal()
+    private async Task ShowAddMemberModal()
     {
-        _newMember = new MemberEntity { MemberSince = DateTime.Now };
+        var nextMemberId = await MemberRepository.GenerateNextMemberIdAsync();
+        _newMember = new MemberEntity 
+        { 
+            MemberId = nextMemberId,
+            MemberSince = DateTime.Now 
+        };
         _errorMessage = string.Empty;
         _showAddModal = true;
     }
@@ -174,14 +180,6 @@ else
     {
         try
         {
-            // Validera att medlems-ID inte redan finns
-            var existing = await MemberRepository.GetByMemberIdAsync(_newMember.MemberId);
-            if (existing != null)
-            {
-                _errorMessage = "En medlem med detta ID finns redan.";
-                return;
-            }
-
             _newMember.MemberSince = DateTime.Now;
             await MemberRepository.AddAsync(_newMember);
             await LoadMembers();

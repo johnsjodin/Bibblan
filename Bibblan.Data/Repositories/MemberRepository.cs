@@ -77,8 +77,31 @@ public class MemberRepository : IMemberRepository
             .ToListAsync();
     }
 
-    public async Task<int> GetTotalCountAsync()
-    {
-        return await _context.Members.CountAsync();
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _context.Members.CountAsync();
+        }
+
+        public async Task<string> GenerateNextMemberIdAsync()
+        {
+            // Hämta högsta befintliga medlemsnummer (M001, M002, etc.)
+            var members = await _context.Members
+                .Where(m => m.MemberId.StartsWith("M"))
+                .Select(m => m.MemberId)
+                .ToListAsync();
+
+            int maxNumber = 0;
+            foreach (var memberId in members)
+            {
+                // Extrahera numret från "M001", "M002", etc.
+                if (memberId.Length > 1 && int.TryParse(memberId[1..], out int number))
+                {
+                    if (number > maxNumber)
+                        maxNumber = number;
+                }
+            }
+
+            // Nästa nummer med ledande nollor (M001, M002, ..., M999, M1000)
+            return $"M{(maxNumber + 1):D3}";
+        }
     }
-}

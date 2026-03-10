@@ -16,4 +16,9 @@ public interface IMemberRepository
     Task DeleteAsync(int id);
     Task<IEnumerable<MemberEntity>> SearchAsync(string searchTerm);
     Task<int> GetTotalCountAsync();
+
+    /// <summary>
+    /// Genererar nästa lediga medlemsnummer (M001, M002, etc.)
+    /// </summary>
+    Task<string> GenerateNextMemberIdAsync();
 }
