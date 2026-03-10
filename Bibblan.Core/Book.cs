@@ -22,11 +22,8 @@ public partial class Book : ISearchable
         if (string.IsNullOrWhiteSpace(isbn))
             throw new ArgumentException("ISBN får inte vara tomt.", nameof(isbn));
 
-        // Validera ISBN-längd (10 eller 13 siffror)
+        // Validera ISBN-längd (exakt 10 eller 13 siffror)
         var digitsOnly = GetDigitsOnly(isbn);
-        if (digitsOnly.Length < 10 || digitsOnly.Length > 13)
-            throw new ArgumentException("ISBN måste vara mellan 10 och 13 siffror.", nameof(isbn));
-
         if (digitsOnly.Length != 10 && digitsOnly.Length != 13)
             throw new ArgumentException("ISBN måste vara exakt 10 eller 13 siffror.", nameof(isbn));
 

@@ -1,0 +1,66 @@
+@using Bibblan.Data.Entities
+
+<div class="card loan-card h-100 @GetCardClass()">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="books/@Loan.BookId">@Loan.Book.Title</a>
+        </h5>
+        <p class="card-text text-muted">@Loan.Book.Author</p>
+        
+        <p class="card-text">
+            <span class="d-block">👤 <a href="members/@Loan.MemberId">@Loan.Member.Name</a></span>
+            <span class="d-block">📅 Lånad: @Loan.LoanDate.ToString("yyyy-MM-dd")</span>
+            <span class="d-block">⏰ Förfaller: @Loan.DueDate.ToString("yyyy-MM-dd")</span>
+            @if (Loan.IsOverdue)
+            {
+                <span class="d-block text-danger fw-bold">
+                    ⚠️ @((DateTime.Now - Loan.DueDate).Days) dagar försenad
+                </span>
+            }
+        </p>
+
+        <div class="mt-2">
+            @if (Loan.IsReturned)
+            {
+                <span class="badge bg-success">Återlämnad</span>
+            }
+            else if (Loan.IsOverdue)
+            {
+                <span class="badge bg-danger">Försenad</span>
+            }
+            else
+            {
+                var daysLeft = (Loan.DueDate - DateTime.Now).Days;
+                <span class="badge @(daysLeft <= 3 ? "bg-warning" : "bg-info")">
+                    @daysLeft dagar kvar
+                </span>
+            }
+        </div>
+    </div>
+    @if (ShowActions && !Loan.IsReturned)
+    {
+        <div class="card-footer">
+            <button class="btn btn-sm btn-primary w-100" @onclick="OnReturn">
+                📥 Återlämna
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public LoanEntity Loan { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowActions { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnReturn { get; set; }
+
+    private string GetCardClass()
+    {
+        if (Loan.IsReturned) return "returned";
+        if (Loan.IsOverdue) return "overdue";
+        return "active";
+    }
+}

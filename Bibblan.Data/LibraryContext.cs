@@ -67,6 +67,11 @@ public class LibraryContext : DbContext
         {
             entity.HasKey(l => l.Id);
 
+            // Index för snabbare sökningar
+            entity.HasIndex(l => l.BookId);
+            entity.HasIndex(l => l.MemberId);
+            entity.HasIndex(l => l.ReturnDate); // För att filtrera aktiva lån
+
             entity.HasOne(l => l.Book)
                   .WithMany(b => b.Loans)
                   .HasForeignKey(l => l.BookId)
@@ -84,11 +89,11 @@ public class LibraryContext : DbContext
 
     private static void SeedData(ModelBuilder modelBuilder)
     {
-        // Exempeldata för böcker
+        // Exempeldata för böcker (ISBN sparas utan bindestreck)
         modelBuilder.Entity<BookEntity>().HasData(
-            new BookEntity { Id = 1, ISBN = "978-91-0-012345-6", Title = "Pippi Långstrump", Author = "Astrid Lindgren", PublishedYear = 1945, IsAvailable = true },
-            new BookEntity { Id = 2, ISBN = "978-91-0-054321-9", Title = "Män som hatar kvinnor", Author = "Stieg Larsson", PublishedYear = 2005, IsAvailable = true },
-            new BookEntity { Id = 3, ISBN = "978-91-7-001234-5", Title = "En man som heter Ove", Author = "Fredrik Backman", PublishedYear = 2012, IsAvailable = true }
+            new BookEntity { Id = 1, ISBN = "9789100123456", Title = "Pippi Långstrump", Author = "Astrid Lindgren", PublishedYear = 1945, IsAvailable = true },
+            new BookEntity { Id = 2, ISBN = "9789100543219", Title = "Män som hatar kvinnor", Author = "Stieg Larsson", PublishedYear = 2005, IsAvailable = true },
+            new BookEntity { Id = 3, ISBN = "9789170012345", Title = "En man som heter Ove", Author = "Fredrik Backman", PublishedYear = 2012, IsAvailable = true }
         );
 
         // Exempeldata för medlemmar

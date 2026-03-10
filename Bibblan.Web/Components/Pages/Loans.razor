@@ -1,6 +1,7 @@
 @page "/loans"
 @using Bibblan.Data.Entities
 @using Bibblan.Data.Repositories
+@using Bibblan.Web.Components.Shared
 @inject ILoanRepository LoanRepository
 @inject IBookRepository BookRepository
 @inject IMemberRepository MemberRepository
@@ -11,8 +12,8 @@
 <h1>📋 Utlåning</h1>
 
 <div class="row mb-4">
-    <div class="col-md-8">
-        <ul class="nav nav-pills">
+    <div class="col-12 col-md-8 mb-2 mb-md-0">
+        <ul class="nav nav-pills flex-wrap">
             <li class="nav-item">
                 <button class="nav-link @(_filter == LoanFilter.Active ? "active" : "")"
                         @onclick="() => SetFilter(LoanFilter.Active)">
@@ -37,8 +38,8 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-4 text-end">
-        <button class="btn btn-success" @onclick="ShowNewLoanModal">
+    <div class="col-12 col-md-4 text-md-end">
+        <button class="btn btn-success w-100 w-md-auto" @onclick="ShowNewLoanModal">
             ➕ Nytt lån
         </button>
     </div>
@@ -81,69 +82,14 @@ else
 
     <p class="text-muted">Visar @_loans.Count() lån</p>
 
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Bok</th>
-                <th>Låntagare</th>
-                <th>Lånedatum</th>
-                <th>Förfallodatum</th>
-                <th>Status</th>
-                <th>Åtgärder</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var loan in _loans)
-            {
-                <tr class="@(loan.IsOverdue ? "table-danger" : "")">
-                    <td>
-                        <a href="books/@loan.BookId">@loan.Book.Title</a>
-                        <br />
-                        <small class="text-muted">@loan.Book.Author</small>
-                    </td>
-                    <td>
-                        <a href="members/@loan.MemberId">@loan.Member.Name</a>
-                    </td>
-                    <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        @loan.DueDate.ToString("yyyy-MM-dd")
-                        @if (loan.IsOverdue)
-                        {
-                            <br />
-                            <small class="text-danger">
-                                (@((DateTime.Now - loan.DueDate).Days) dagar försenad)
-                            </small>
-                        }
-                    </td>
-                    <td>
-                        @if (loan.IsReturned)
-                        {
-                            <span class="badge bg-success">Återlämnad</span>
-                        }
-                        else if (loan.IsOverdue)
-                        {
-                            <span class="badge bg-danger">Försenad</span>
-                        }
-                        else
-                        {
-                            var daysLeft = (loan.DueDate - DateTime.Now).Days;
-                            <span class="badge @(daysLeft <= 3 ? "bg-warning" : "bg-info")">
-                                @daysLeft dagar kvar
-                            </span>
-                        }
-                    </td>
-                    <td>
-                        @if (!loan.IsReturned)
-                        {
-                            <button class="btn btn-sm btn-primary" @onclick="() => ReturnLoan(loan)">
-                                📥 Återlämna
-                            </button>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row">
+        @foreach (var loan in _loans)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                <LoanCard Loan="loan" OnReturn="() => ReturnLoan(loan)" />
+            </div>
+        }
+    </div>
 }
 
 @if (_showNewLoanModal)

@@ -1,6 +1,7 @@
 @page "/books"
 @using Bibblan.Data.Entities
 @using Bibblan.Data.Repositories
+@using Bibblan.Web.Components.Shared
 @inject IBookRepository BookRepository
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -10,7 +11,7 @@
 <h1>📖 Böcker</h1>
 
 <div class="row mb-3">
-    <div class="col-md-6">
+    <div class="col-12 col-md-6 mb-2 mb-md-0">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Sök på titel, författare eller ISBN..."
                    @bind="_searchTerm" @bind:event="oninput" @onkeyup="HandleSearch" />
@@ -25,8 +26,8 @@
             }
         </div>
     </div>
-    <div class="col-md-6 text-end">
-        <button class="btn btn-primary" @onclick="ShowAddBookModal">
+    <div class="col-12 col-md-6 text-md-end">
+        <button class="btn btn-primary w-100 w-md-auto" @onclick="ShowAddBookModal">
             ➕ Lägg till bok
         </button>
     </div>
@@ -57,62 +58,14 @@ else
 {
     <p class="text-muted">Visar @_books.Count() böcker</p>
 
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th @onclick="() => SortBy(SortColumn.Title)" style="cursor: pointer">
-                    Titel @GetSortIndicator(SortColumn.Title)
-                </th>
-                <th @onclick="() => SortBy(SortColumn.Author)" style="cursor: pointer">
-                    Författare @GetSortIndicator(SortColumn.Author)
-                </th>
-                <th>ISBN</th>
-                <th @onclick="() => SortBy(SortColumn.Year)" style="cursor: pointer">
-                    År @GetSortIndicator(SortColumn.Year)
-                </th>
-                <th>Status</th>
-                <th>Åtgärder</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var book in _sortedBooks)
-            {
-                <tr>
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td><code>@book.FormattedISBN</code></td>
-                    <td>@book.PublishedYear</td>
-                    <td>
-                        @if (book.IsAvailable)
-                        {
-                            @if (book.IsReserved)
-                            {
-                                <span class="badge bg-warning">Reserverad</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-success">Tillgänglig</span>
-                            }
-                        }
-                        else
-                        {
-                            @if (book.IsReserved)
-                            {
-                                <span class="badge bg-danger">Utlånad (Reserverad)</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Utlånad</span>
-                            }
-                        }
-                    </td>
-                    <td>
-                        <a href="books/@book.Id" class="btn btn-sm btn-outline-primary">Detaljer</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row">
+        @foreach (var book in _books)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                <BookCard Book="book" />
+            </div>
+        }
+    </div>
 }
 
 @if (_showAddModal)
@@ -166,17 +119,11 @@ else
 
 @code {
     private IEnumerable<BookEntity> _books = new List<BookEntity>();
-    private IEnumerable<BookEntity> _sortedBooks => ApplySorting();
     private bool _isLoading = true;
     private string _searchTerm = string.Empty;
     private bool _showAddModal = false;
     private BookEntity _newBook = new();
     private string _errorMessage = string.Empty;
-
-    private SortColumn _sortColumn = SortColumn.Title;
-    private bool _sortAscending = true;
-
-    private enum SortColumn { Title, Author, Year }
 
     protected override async Task OnInitializedAsync()
     {
@@ -215,36 +162,6 @@ else
     {
         _searchTerm = string.Empty;
         await LoadBooks();
-    }
-
-    private void SortBy(SortColumn column)
-    {
-        if (_sortColumn == column)
-        {
-            _sortAscending = !_sortAscending;
-        }
-        else
-        {
-            _sortColumn = column;
-            _sortAscending = true;
-        }
-    }
-
-    private IEnumerable<BookEntity> ApplySorting()
-    {
-        return _sortColumn switch
-        {
-            SortColumn.Title => _sortAscending ? _books.OrderBy(b => b.Title) : _books.OrderByDescending(b => b.Title),
-            SortColumn.Author => _sortAscending ? _books.OrderBy(b => b.Author) : _books.OrderByDescending(b => b.Author),
-            SortColumn.Year => _sortAscending ? _books.OrderBy(b => b.PublishedYear) : _books.OrderByDescending(b => b.PublishedYear),
-            _ => _books
-        };
-    }
-
-    private string GetSortIndicator(SortColumn column)
-    {
-        if (_sortColumn != column) return "";
-        return _sortAscending ? "▲" : "▼";
     }
 
     private void ShowAddBookModal()

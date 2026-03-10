@@ -1,0 +1,45 @@
+@using Bibblan.Data.Entities
+
+<div class="card member-card h-100">
+    <div class="card-body">
+        <h5 class="card-title">@Member.Name</h5>
+        <p class="card-text">
+            <small class="text-muted">ID: @Member.MemberId</small>
+        </p>
+        <p class="card-text">
+            <span class="d-block">📧 @Member.Email</span>
+            <span class="d-block">📅 Medlem sedan: @Member.MemberSince.ToString("yyyy-MM-dd")</span>
+        </p>
+        <div class="mt-2">
+            @{
+                var activeLoans = Member.Loans?.Count(l => l.ReturnDate == null) ?? 0;
+            }
+            @if (activeLoans > 0)
+            {
+                <span class="badge bg-info">@activeLoans aktiva lån</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">Inga aktiva lån</span>
+            }
+        </div>
+    </div>
+    @if (ShowActions)
+    {
+        <div class="card-footer d-flex gap-2 flex-wrap">
+            <a href="members/@Member.Id" class="btn btn-sm btn-outline-primary">Visa detaljer</a>
+            <button class="btn btn-sm btn-outline-danger" @onclick="OnDelete">Ta bort</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public MemberEntity Member { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowActions { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+}

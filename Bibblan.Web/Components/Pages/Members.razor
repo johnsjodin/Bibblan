@@ -1,6 +1,7 @@
 @page "/members"
 @using Bibblan.Data.Entities
 @using Bibblan.Data.Repositories
+@using Bibblan.Web.Components.Shared
 @using System.ComponentModel.DataAnnotations
 @inject IMemberRepository MemberRepository
 @inject NavigationManager Navigation
@@ -11,7 +12,7 @@
 <h1>👥 Medlemmar</h1>
 
 <div class="row mb-3">
-    <div class="col-md-6">
+    <div class="col-12 col-md-6 mb-2 mb-md-0">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Sök på namn, e-post eller medlems-ID..."
                    @bind="_searchTerm" @bind:event="oninput" @onkeyup="HandleSearch" />
@@ -26,8 +27,8 @@
             }
         </div>
     </div>
-    <div class="col-md-6 text-end">
-        <button class="btn btn-primary" @onclick="ShowAddMemberModal">
+    <div class="col-12 col-md-6 text-md-end">
+        <button class="btn btn-primary w-100 w-md-auto" @onclick="ShowAddMemberModal">
             ➕ Ny medlem
         </button>
     </div>
@@ -61,36 +62,8 @@ else
     <div class="row">
         @foreach (var member in _members)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">@member.Name</h5>
-                        <p class="card-text">
-                            <small class="text-muted">ID: @member.MemberId</small><br />
-                            <small>📧 @member.Email</small><br />
-                            <small>📅 Medlem sedan: @member.MemberSince.ToString("yyyy-MM-dd")</small>
-                        </p>
-                        <div class="mt-2">
-                            @{
-                                var activeLoans = member.Loans?.Count(l => l.ReturnDate == null) ?? 0;
-                            }
-                            @if (activeLoans > 0)
-                            {
-                                <span class="badge bg-info">@activeLoans aktiva lån</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Inga aktiva lån</span>
-                            }
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="members/@member.Id" class="btn btn-sm btn-outline-primary">Visa detaljer</a>
-                        <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteMember(member.Id)">
-                            Ta bort
-                        </button>
-                    </div>
-                </div>
+            <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                <MemberCard Member="member" OnDelete="() => DeleteMember(member.Id)" />
             </div>
         }
     </div>

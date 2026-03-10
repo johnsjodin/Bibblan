@@ -1,6 +1,6 @@
 @using Bibblan.Data.Entities
 
-<div class="card book-card @(Book.IsAvailable ? "available" : "borrowed")">
+<div class="card book-card h-100 @(Book.IsAvailable ? "available" : "borrowed")">
     <div class="card-body">
         <h5 class="card-title">@Book.Title</h5>
         <p class="card-text text-muted">@Book.Author (@Book.PublishedYear)</p>

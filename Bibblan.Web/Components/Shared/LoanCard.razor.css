@@ -1,0 +1,22 @@
+.loan-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.loan-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.loan-card.active {
+    border-left: 4px solid #0dcaf0;
+}
+
+.loan-card.overdue {
+    border-left: 4px solid #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.loan-card.returned {
+    border-left: 4px solid #198754;
+    opacity: 0.8;
+}

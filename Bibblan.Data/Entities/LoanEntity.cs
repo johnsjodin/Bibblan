@@ -16,7 +16,9 @@ public class LoanEntity
     [NotInFuture(ErrorMessage = "Lånedatum kan inte vara i framtiden.")]
     public DateTime LoanDate { get; set; }
 
+    [MustBeAfter(nameof(LoanDate), ErrorMessage = "Förfallodatum måste vara efter lånedatum.")]
     public DateTime DueDate { get; set; }
+
     public DateTime? ReturnDate { get; set; }
 
     // Beräknade egenskaper

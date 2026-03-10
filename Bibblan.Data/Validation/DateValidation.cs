@@ -77,3 +77,37 @@ public class NotInFutureAttribute : ValidationAttribute
         return ValidationResult.Success;
     }
 }
+
+/// <summary>
+/// Valideringsattribut för förfallodatum.
+/// Validerar att datumet är efter ett annat datumfält.
+/// </summary>
+public class MustBeAfterAttribute : ValidationAttribute
+{
+    private readonly string _comparisonProperty;
+
+    public MustBeAfterAttribute(string comparisonProperty)
+    {
+        _comparisonProperty = comparisonProperty;
+        ErrorMessage = $"Datumet måste vara efter {comparisonProperty}.";
+    }
+
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+    {
+        if (value is not DateTime endDate)
+            return ValidationResult.Success;
+
+        var property = validationContext.ObjectType.GetProperty(_comparisonProperty);
+        if (property == null)
+            return new ValidationResult($"Egenskapen {_comparisonProperty} hittades inte.");
+
+        var startDate = property.GetValue(validationContext.ObjectInstance) as DateTime?;
+        if (startDate == null)
+            return ValidationResult.Success;
+
+        if (endDate <= startDate)
+            return new ValidationResult(ErrorMessage);
+
+        return ValidationResult.Success;
+    }
+}
