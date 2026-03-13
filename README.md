@@ -19,7 +19,7 @@ Ett komplett bibliotekshanteringssystem byggt i C# med .NET 10. Projektet bestå
 
 En fullständig webbapplikation som bygger vidare på Version 1 med moderna teknologier.
 
-## 🎯 Funktioner i Version 2
+## 🎯 Teknisk överblick
 
 - **Blazor Server** - Modernt webbgränssnitt med responsiv design
 - **Entity Framework Core** - Databashantering med SQL Server LocalDB
