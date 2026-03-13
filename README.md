@@ -3,6 +3,10 @@
 
 
 <img width="1273" height="473" alt="Blazor-UI" src="https://github.com/user-attachments/assets/85fd6010-6903-4267-ae8e-9cda6b8d594b" />
+
+<img width="314" height="544" alt="Blazor-UI-mobil" src="https://github.com/user-attachments/assets/3ce90279-9bdd-42a7-af46-a4191734a931" />
+<img width="310" height="541" alt="Blazor-UI-mobil2" src="https://github.com/user-attachments/assets/91425b9d-5964-4534-a0f6-ccba89230542" />
+
 </center>
 
 # 📚 Bibblan - Bibliotekshanteringssystem
